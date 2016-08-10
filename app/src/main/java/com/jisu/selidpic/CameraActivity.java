@@ -2,6 +2,7 @@ package com.jisu.selidpic;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
@@ -13,28 +14,40 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 import android.os.Handler;
 
 public class CameraActivity extends Activity implements SurfaceHolder.Callback, Camera.PreviewCallback, SensorEventListener {
-
-    Camera camera;
+    int width, height, cameraId;
+    static Camera camera;
     SurfaceHolder holder;
     VideoView videoView;
+    ImageButton button3, button4;
+    LinearLayout linearLayout;
     TextView textView;
+
+    int frameHeight = 1280;
+    int frameWidth = 720;
+    int frameSize = frameHeight * frameWidth;
+    int rgb[];
+    byte myData[] = new byte[frameSize];
 
     private SensorManager sensorManager;
     private Sensor sensor;
 
-    private float sensorValue =0;
+    private float sensorValue = 0;
 
     private Handler handler;
     private Timer timer;
@@ -46,6 +59,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         initView();
+        initListener();
         initSensor();
         setCamera();
         timer = new Timer(false);
@@ -62,8 +76,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                         } else if (sensorValue > 320) {
                             Toast.makeText(CameraActivity.this, "ㅇ,아...눈부셔....", Toast.LENGTH_SHORT).show();
                             brightness_ok = false;
-                        }
-                        else{
+                        } else {
                             brightness_ok = true;
                         }
                     }
@@ -75,36 +88,58 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                 (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
 
+    private void initListener() {
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                camera.setPreviewCallback(null);
+                camera.stopPreview();
+                camera.release();
+                camera=null;
+                Intent Intent = new Intent(CameraActivity.this, MainActivity.class);
+                startActivity(Intent);
+                finish();
+            }
+        });
+    }
+
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI);
 
     }
 
     @Override
-    protected void onPause(){
-        super.onPause();
+    protected void onPause() {
+        videoView.setVisibility(View.GONE);
+        holder.removeCallback(this);
+        camera.setPreviewCallback(null);
+        camera.stopPreview();
+        camera.release();
+        camera = null;
         sensorManager.unregisterListener(this);
+        super.onPause();
     }
 
     private void setCamera() {
-        int cameraId = 0;
+        cameraId = 0;
         int numberOfCameras = Camera.getNumberOfCameras();
         Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
 
-        for(int i=0; i < numberOfCameras; i++) {
+        for (int i = 0; i < numberOfCameras; i++) {
             Camera.getCameraInfo(i, cameraInfo);
 
             /* 전면 카메라를 쓸 것인지 후면 카메라를 쓸것인지 설정 시 */
             /* 전면카메라 사용시 CAMERA_FACING_FRONT 로 조건절 */
-            if(cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT)
+            if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT)
                 cameraId = i;
         }
-        camera = Camera.open(cameraId);
+        camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
         Camera.Parameters params = camera.getParameters();
         params.setPreviewFpsRange(15000, 30000);
         params.setPreviewSize(1280, 720);
+        rgb = new int[frameSize];
         //params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO); //video 화면이 변할 때마다 자동 포커스 맞춤
 
         params.setPreviewFormat(ImageFormat.NV21);
@@ -117,26 +152,41 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         holder.addCallback(this);
     }
 
-    private void initSensor(){
+    private void initSensor() {
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
     }
 
     private void initView() {
+        linearLayout = (LinearLayout) findViewById(R.id.camera_linearlayout_videoview);
         videoView = (VideoView) findViewById(R.id.videoView);
-        textView = (TextView) findViewById(R.id.textview);
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(700, 820);
+        videoView.setLayoutParams(layoutParams);
+
+        Intent intent = getIntent();
+        width = intent.getIntExtra("width", 0);
+        height = intent.getIntExtra("height", 0);
+
+        button3 = (ImageButton) findViewById(R.id.camera_btn_back);
+        button4 = (ImageButton) findViewById(R.id.camera_btn_gal);
+
+        layoutParams.setMargins(0, 200, 0, 0);
+        layoutParams.gravity = Gravity.CENTER;
+
+
+        //  textView = (TextView) findViewById(R.id.textview);
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
+        camera.unlock();
         try {
-            camera.unlock();
             camera.reconnect();
             camera.setPreviewDisplay(holder);
-            camera.startPreview();
-        } catch(Exception e){
-            e.printStackTrace();
+        } catch (Exception e) {
         }
+        camera.startPreview();
     }
 
     @Override
@@ -144,21 +194,45 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         camera.setPreviewCallback(this);
     }
 
+
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+        sensorManager.unregisterListener(this);
+        /*
+        try {
+            //camera.reconnect();
+
+            if(camera!=null){
+                holder.removeCallback(this);
+                camera.setPreviewCallback(null);
+                //videoView.setVisibility(View.GONE);
+                //camera.setPreviewDisplay(null);
+                camera.stopPreview();
+                camera.release();
+
+                camera = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
     }
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
+        for (int i = 0; i < frameSize; i++) {
+            myData[i] = data[i];
+        }
+        /*
         textView.setText("Data: "+data.toString());
         textView.setHighlightColor(Color.WHITE);
         textView.setTextColor(Color.WHITE);
         textView.setShadowLayer(2.0f, 1.0f, 1.0f, Color.BLACK) ;
+        */
     }
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        if(sensorEvent.sensor.getType()==Sensor.TYPE_LIGHT){
+        if (sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT) {
             sensorValue = sensorEvent.values[0];
         }
     }
@@ -171,7 +245,30 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     @Override
     protected void onDestroy() {
         timer.cancel();
+        sensorManager.unregisterListener(this);
+        /*
+        camera.stopPreview();
+        camera.release();
+        camera = null;
+        */
         super.onDestroy();
+    }
+
+    @Override
+    protected void onStop() {
+        sensorManager.unregisterListener(this);
+        try{
+            /*
+            camera.setPreviewCallback(null);
+            camera.stopPreview();
+            camera.release();
+            camera = null;
+            videoView.setVisibility(View.GONE);
+            holder.removeCallback(this);*/
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        super.onStop();
     }
 
     public class DrawOnTop extends View {
@@ -182,7 +279,6 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
         @Override
         protected void onDraw(Canvas canvas) {
-            // TODO Auto-generated method stub
             Paint paint = new Paint();
             /*
             paint.setStyle(Paint.Style.FILL);
@@ -204,8 +300,6 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
             Path path2 = new Path();
 
-            //path2.moveTo(820, 280);
-            //path2.cubicTo(740, 200, 670, 190, 620, 170);
             path2.moveTo(670, 280);
             path2.cubicTo(590, 200, 520, 190, 470, 170);
             path2.offset(0, 450);
@@ -214,5 +308,84 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
             super.onDraw(canvas);
         }
+    }
+
+    private void spoidRGB() {
+        for (int i = 0, yp = 0; i < frameHeight; i++) {
+            int uvp = frameSize + (i >> 1) * frameWidth, u = 0, v = 0;
+            for (int j = 0; j < frameWidth; j++, yp++) {
+                int y = (0xff & ((int) myData[yp])) - 16;
+                if (y < 0) y = 0;
+                if ((i & 1) == 0) {
+                    v = (0xff & myData[uvp++]) - 128;
+                    u = (0xff & myData[uvp++]) - 128;
+                }
+
+                int y1192 = 1192 * y;
+                int r = (y1192 + 1634 * v);
+                int g = (y1192 - 833 * v - 400 * u);
+                int b = (y1192 + 2066 * u);
+
+                if (r < 0) r = 0;
+                else if (r > 262143) r = 262143;
+                if (g < 0) g = 0;
+                else if (g > 262143) g = 262143;
+                if (b < 0) b = 0;
+                else if (b > 262143) b = 262143;
+
+                rgb[yp] = 0xff000000 |
+                        ((r << 6) & 0xff0000) |
+                        ((g >> 2) & 0xff00) |
+                        ((b >> 10) & 0xff);
+            }
+        }
+    }
+
+    private int getR(int value) {
+        return (value >> 16) & 0xff;
+    }
+
+    private int getG(int value) {
+        return (value >> 8) & 0xff;
+    }
+
+    private int getB(int value) {
+        return (value) & 0xff;
+    }
+
+    private int getColorTypical() {
+        int sumR, sumG, sumB, avrR, avrG, avrB, resultRGB;
+        sumR = sumG = sumB = avrR = avrG = avrB = resultRGB = 0;
+
+        for (int k = 0; k < frameSize; k++) {
+            sumR += getR(rgb[k]);
+            sumG += getG(rgb[k]);
+            sumB += getB(rgb[k]);
+        }
+
+        avrR = sumR / frameSize;
+        avrG = sumG / frameSize;
+        avrB = sumB / frameSize;
+
+        resultRGB = avrR | (avrG << 8) | (avrB << 16);
+
+        return resultRGB;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        /*
+        videoView.setVisibility(View.GONE);
+        holder.removeCallback(this);
+        camera.setPreviewCallback(null);
+        camera.stopPreview();
+        camera.release();
+        camera = null;
+        sensorManager.unregisterListener(this);
+         */
+        Intent intent = new Intent(CameraActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

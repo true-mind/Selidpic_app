@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#888888"
+    android:weightSum="1">
+
+    <Space
+        android:layout_width="1px"
+        android:layout_height="0px"
+        android:layout_weight="0.178"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.07"
+        android:weightSum="1">
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.3856"/>
+
+        <EditText
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:inputType="numberSigned"
+            android:ems="10"
+            android:id="@+id/editText1"
+            android:layout_gravity="bottom"
+            android:layout_weight="0.41"
+            android:hint="mm단위로 입력"/>
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.2144"/>
+    </LinearLayout>
+
+    <Space
+        android:layout_width="1px"
+        android:layout_height="0px"
+        android:layout_weight="0.048"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.07"
+        android:weightSum="1">
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.3856"/>
+
+        <EditText
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:inputType="numberSigned"
+            android:ems="10"
+            android:id="@+id/editText2"
+            android:layout_gravity="bottom"
+            android:layout_weight="0.41"
+            android:hint="mm단위로 입력"/>
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.2144"/>
+    </LinearLayout>
+
+    <Space
+        android:layout_width="1px"
+        android:layout_height="0px"
+        android:layout_weight="0.478"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.098"
+        android:weightSum="1">
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.5354"/>
+
+        <ImageButton
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.178"
+            android:id="@+id/user_btn1"
+            android:background="@mipmap/user_define_cancel" />
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.047"/>
+
+        <ImageButton
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.178"
+            android:id="@+id/user_btn2"
+            android:background="@mipmap/user_define_confirm" />
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.0616"/>
+    </LinearLayout>
+
+    <Space
+        android:layout_width="1px"
+        android:layout_height="0px"
+        android:layout_weight="0.058"/>
+
+
+</LinearLayout>

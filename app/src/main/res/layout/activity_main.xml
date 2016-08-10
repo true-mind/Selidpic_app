@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.ex1.MainActivity"
+    android:orientation="vertical"
+    android:background="@mipmap/main_back2"
+    android:weightSum="1">
+
+    <Space
+        android:layout_width="1px"
+        android:layout_height="0px"
+        android:layout_weight="0.213"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.217"
+        android:weightSum="1">
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.111"/>
+
+        <ImageButton
+            android:onClick="onClick"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.359"
+            android:id="@+id/main_btn1"
+            android:background="@mipmap/main_button1" />
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.06"/>
+
+        <ImageButton
+            android:onClick="onClick"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.359"
+            android:id="@+id/main_btn2"
+            android:background="@mipmap/main_button2"/>
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.111"/>
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="1px"
+        android:layout_height="0px"
+        android:layout_weight="0.0235"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.217"
+        android:weightSum="1">
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.111"/>
+
+        <ImageButton
+            android:onClick="onClick"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.359"
+            android:id="@+id/main_btn3"
+            android:background="@mipmap/main_button3"/>
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.06"/>
+
+        <ImageButton
+            android:onClick="onClick"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.359"
+            android:id="@+id/main_btn4"
+            android:background="@mipmap/main_button4"/>
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.111"/>
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="1px"
+        android:layout_height="0px"
+        android:layout_weight="0.0235"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.217"
+        android:weightSum="1">
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.111"/>
+
+        <ImageButton
+            android:onClick="onClick"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.359"
+            android:id="@+id/main_btn5"
+            android:background="@mipmap/main_button5"/>
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.06"/>
+
+        <ImageButton
+            android:onClick="onClick"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.359"
+            android:id="@+id/main_btn6"
+            android:background="@mipmap/main_button6" />
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.111"/>
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="1px"
+        android:layout_height="0px"
+        android:layout_weight="0.089"/>
+</LinearLayout>

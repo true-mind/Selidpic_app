@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.ex1.CautionActivity"
+    android:orientation="vertical"
+    android:background="@mipmap/caution_back"
+    android:weightSum="1">
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="0px"
+        android:layout_weight="0.85"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.09114"
+        android:weightSum="1">
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.0827"/>
+
+        <ImageButton
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:id="@+id/caution_btn_cancel"
+            android:layout_weight="0.1646"
+            android:background="@mipmap/caution_button_cancel"/>
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.0544"/>
+
+        <ImageButton
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:id="@+id/caution_btn"
+            android:layout_weight="0.5909"
+            android:background="@mipmap/caution_button_start2"/>
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.1164"/>
+    </LinearLayout>
+
+    <Space
+        android:layout_width="1px"
+        android:layout_height="0px"
+        android:layout_weight="0.05886"/>
+
+</LinearLayout>
