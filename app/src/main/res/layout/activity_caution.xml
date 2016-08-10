@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/caution_btn_cancel"
             android:layout_weight="0.1646"
-            android:background="@mipmap/caution_button_cancel"/>
+            android:background="@drawable/caution_btn_cancel"/>
 
         <Space
             android:layout_width="0px"
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/caution_btn"
             android:layout_weight="0.5909"
-            android:background="@mipmap/caution_button_start2"/>
+            android:background="@drawable/caution_btn_start"/>
 
         <Space
             android:layout_width="0px"

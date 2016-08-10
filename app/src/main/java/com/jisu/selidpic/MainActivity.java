@@ -6,9 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
+    private final long FINISH_INTERVAL_TIME = 2000;
+    private long backPressedTime = 0;
     ImageButton btn1, btn2, btn3, btn4, btn5, btn6;
 
 
@@ -28,7 +31,7 @@ public class MainActivity extends Activity {
                 intent1.putExtra("width", 25);
                 intent1.putExtra("height", 30);
                 startActivity(intent1);
-                //finish();
+                finish();
             }
 
         });
@@ -67,14 +70,13 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 Intent intent5 = new Intent(MainActivity.this, UserDefineActivity.class);
                 startActivity(intent5);
+                finish();
             }
         });
         btn6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent6 = new Intent(MainActivity.this, CautionActivity.class);
-                startActivity(intent6);
-                finish();
+                Toast.makeText(MainActivity.this, "솔직헌 심정 - Truemind", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -86,5 +88,20 @@ public class MainActivity extends Activity {
         btn4 = (ImageButton) findViewById(R.id.main_btn4);
         btn5 = (ImageButton) findViewById(R.id.main_btn5);
         btn6 = (ImageButton) findViewById(R.id.main_btn6);
+    }
+
+    @Override
+    public void onBackPressed() {
+        long tempTime = System.currentTimeMillis();
+        long intervalTime = tempTime - backPressedTime;
+
+        if(0<=intervalTime && FINISH_INTERVAL_TIME >= intervalTime) {
+            super.onBackPressed();
+        }
+        else
+        {
+            backPressedTime = tempTime;
+            Toast.makeText(getApplicationContext(), "\"Back\"버튼 을 한번 더 눌러 종료",Toast.LENGTH_SHORT).show();
+        }
     }
 }

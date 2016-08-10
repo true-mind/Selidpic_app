@@ -1,87 +1,66 @@
 package com.jisu.selidpic;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import android.widget.Toast;
 
 /**
- * Created by jisu on 2016. 7. 23..
+ * Created by 현석 on 2016-08-09.
  */
 public class AfterActivity extends Activity {
 
-
-    ImageButton imagebtn_share, imagebtn_save, imagebtn_convert, imagebtn_shareapp;
+    ImageButton btn1, btn2, btn3, btn4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_after);
-        initView();
-        initListener();
-    }
 
-    private void initListener() {
-        imagebtn_share.setOnClickListener(new View.OnClickListener() {
+        btn1 = (ImageButton) findViewById(R.id.after_btn1);
+        btn2 = (ImageButton) findViewById(R.id.after_btn2);
+        btn3 = (ImageButton) findViewById(R.id.after_btn3);
+        btn4 = (ImageButton) findViewById(R.id.after_btn4);
+
+        btn1.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
+                Toast.makeText(AfterActivity.this, "Share", Toast.LENGTH_SHORT).show();
 
             }
         });
 
-        imagebtn_convert.setOnClickListener(new View.OnClickListener() {
+        btn2.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
+                Toast.makeText(AfterActivity.this, "Convert", Toast.LENGTH_SHORT).show();
 
             }
         });
 
-        imagebtn_shareapp.setOnClickListener(new View.OnClickListener() {
+        btn3.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
+                Toast.makeText(AfterActivity.this, "Replay", Toast.LENGTH_SHORT).show();
 
             }
         });
 
-        imagebtn_save.setOnClickListener(new View.OnClickListener() {
+        btn4.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
+                Toast.makeText(AfterActivity.this, "Save", Toast.LENGTH_SHORT).show();
 
             }
         });
     }
+    public void onBackPressed() {
+        Intent Intent = new Intent(AfterActivity.this, MainActivity.class);
+        startActivity(Intent);
+        finish();
 
-    private void initView() {
-        // TODO: 2016. 7. 23. layout 완성 후 채우기
     }
 
-    private void SaveBitmapToFileCache(Bitmap bitmap, String strFilePath){
-        File fileCacheItem = new File(strFilePath);
-        OutputStream out = null;
-
-        try{
-            fileCacheItem.createNewFile();
-            out = new FileOutputStream(fileCacheItem);
-
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            //bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-        finally{
-            try{
-                out.close();
-            }
-            catch(IOException e){
-                e.printStackTrace();
-            }
-        }
-    }
 }

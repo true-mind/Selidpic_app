@@ -3,8 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context="com.example.ex1.UserDefineActivity"
     android:orientation="vertical"
-    android:background="#888888"
+    android:background="@mipmap/user_define_back3"
     android:weightSum="1">
 
     <Space
@@ -95,7 +96,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.178"
             android:id="@+id/user_btn1"
-            android:background="@mipmap/user_define_cancel" />
+            android:background="@drawable/user_define_cancel" />
 
         <Space
             android:layout_width="0px"
@@ -107,7 +108,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.178"
             android:id="@+id/user_btn2"
-            android:background="@mipmap/user_define_confirm" />
+            android:background="@drawable/user_define_confirm" />
 
         <Space
             android:layout_width="0px"

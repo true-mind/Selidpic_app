@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.359"
             android:id="@+id/main_btn1"
-            android:background="@mipmap/main_button1" />
+            android:background="@drawable/main_btn1" />
 
         <Space
             android:layout_width="0px"
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.359"
             android:id="@+id/main_btn2"
-            android:background="@mipmap/main_button2"/>
+            android:background="@drawable/main_btn2"/>
 
         <Space
             android:layout_width="0px"
@@ -76,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.359"
             android:id="@+id/main_btn3"
-            android:background="@mipmap/main_button3"/>
+            android:background="@drawable/main_btn3"/>
 
         <Space
             android:layout_width="0px"
@@ -89,7 +89,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.359"
             android:id="@+id/main_btn4"
-            android:background="@mipmap/main_button4"/>
+            android:background="@drawable/main_btn4"/>
 
         <Space
             android:layout_width="0px"
@@ -121,7 +121,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.359"
             android:id="@+id/main_btn5"
-            android:background="@mipmap/main_button5"/>
+            android:background="@drawable/main_btn5"/>
 
         <Space
             android:layout_width="0px"
@@ -134,7 +134,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.359"
             android:id="@+id/main_btn6"
-            android:background="@mipmap/main_button6" />
+            android:background="@drawable/main_btn6" />
 
         <Space
             android:layout_width="0px"

@@ -1,2 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
+
+    <item
+        jar="C:\Android\Selidpic_app\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="23.0.0"
+        sha1="ff6487e862009ab4e9f6c47ced157ba92befc220">
+        <dex dex="C:\Android\Selidpic_app\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_63d0f5a3f9521b0cc9c3754f14594a8f39db0c6d\classes.dex" />
+    </item>
+
+</items>

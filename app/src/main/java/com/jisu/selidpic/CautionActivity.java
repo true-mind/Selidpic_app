@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 /**
  * Created by 현석 on 2016-07-13.
@@ -29,13 +30,11 @@ public class CautionActivity extends Activity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent1 = new Intent(CautionActivity.this,  CameraActivity.class);
+                Intent intent1 = new Intent(CautionActivity.this, AfterActivity.class);
                 startActivity(intent1);
                 finish();
             }
         });
-
-
 
 
         button2.setOnClickListener(new View.OnClickListener() {
@@ -47,11 +46,12 @@ public class CautionActivity extends Activity {
 
             }
         });
-
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+        public void onBackPressed() {
+                Intent Intent2 = new Intent(CautionActivity.this, MainActivity.class);
+                startActivity(Intent2);
+                finish();
     }
+
 }

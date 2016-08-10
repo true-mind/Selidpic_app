@@ -49,4 +49,10 @@ public class UserDefineActivity extends Activity {
         });
 
     }
+    public void onBackPressed() {
+        Intent Intent2 = new Intent(UserDefineActivity.this, MainActivity.class);
+        startActivity(Intent2);
+        finish();
+
+    }
 }

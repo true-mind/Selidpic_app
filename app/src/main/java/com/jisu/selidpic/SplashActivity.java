@@ -1,13 +1,13 @@
 package com.jisu.selidpic;
 
-/**
- * Created by 현석 on 2016-07-05.
- */
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+/**
+ * Created by 현석 on 2016-08-10.
+ */
 public class SplashActivity extends Activity {
 
     Handler handler = new Handler();
@@ -25,5 +25,6 @@ public class SplashActivity extends Activity {
 
             }
         }, 2000);
+
     }
 }
