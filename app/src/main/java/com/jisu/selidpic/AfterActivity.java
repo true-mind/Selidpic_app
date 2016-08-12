@@ -29,6 +29,7 @@ public class AfterActivity extends Activity {
             public void onClick(View v) {
                 Toast.makeText(AfterActivity.this, "Share", Toast.LENGTH_SHORT).show();
 
+
             }
         });
 

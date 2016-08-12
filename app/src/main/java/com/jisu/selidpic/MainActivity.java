@@ -24,55 +24,76 @@ public class MainActivity extends Activity {
     }
 
     private void initListener() {
+
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
+
             public void onClick(View v) {
+
                 Intent intent1 = new Intent(MainActivity.this, CautionActivity.class);
                 intent1.putExtra("width", 25);
                 intent1.putExtra("height", 30);
+                intent1.putExtra("view", 1);
                 startActivity(intent1);
                 finish();
             }
 
         });
+
+
+
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent2 = new Intent(MainActivity.this, CautionActivity.class);
                 intent2.putExtra("width", 30);
                 intent2.putExtra("height", 40);
+                intent2.putExtra("view", 2);
                 startActivity(intent2);
                 finish();
             }
         });
+
+
         btn3.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 Intent intent3 = new Intent(MainActivity.this, CautionActivity.class);
                 intent3.putExtra("width", 35);
                 intent3.putExtra("height", 45);
+                intent3.putExtra("view", 3);
                 startActivity(intent3);
                 finish();
             }
         });
+
+
         btn4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent4 = new Intent(MainActivity.this, CautionActivity.class);
                 intent4.putExtra("width", 50);
                 intent4.putExtra("height", 70);
+                intent4.putExtra("view", 4);
                 startActivity(intent4);
                 finish();
             }
         });
+
+
+
         btn5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent5 = new Intent(MainActivity.this, UserDefineActivity.class);
+                intent5.putExtra("view", 5);
                 startActivity(intent5);
                 finish();
             }
         });
+
+
+
         btn6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

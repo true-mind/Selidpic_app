@@ -30,7 +30,7 @@
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
                 android:id="@+id/imageView"
-                android:background="@mipmap/camera_status_1"
+
                 android:layout_weight="0.6771"/>
 
             <Space
@@ -87,16 +87,17 @@
             android:layout_weight="0.03107"/>
 
     </LinearLayout>
+
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/camera_linearlayout_videoview"
-        android:orientation="vertical">
-        <VideoView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/videoView"
-            android:layout_gravity="center"/>
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/camera_linearlayout_videoview"
+    android:orientation="vertical">
+    <VideoView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/videoView"
+        android:layout_gravity="center"/>
 
         <!--
         <TextView
@@ -105,7 +106,7 @@
             android:text="Hello World!"
             android:layout_weight="0.05"
             android:id="@+id/textview"/>
-            -->
+-->
     </LinearLayout>
 
 </FrameLayout>

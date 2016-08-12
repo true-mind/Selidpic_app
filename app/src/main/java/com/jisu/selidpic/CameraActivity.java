@@ -23,20 +23,31 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
-
+import android.app.Activity;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.RadioGroup;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 import android.os.Handler;
 
 public class CameraActivity extends Activity implements SurfaceHolder.Callback, Camera.PreviewCallback, SensorEventListener {
-    int width, height, cameraId;
+    int width, height, cameraId, view;
     static Camera camera;
     SurfaceHolder holder;
     VideoView videoView;
     ImageButton button3, button4;
     LinearLayout linearLayout;
     TextView textView;
+
+    ImageView imgStatus;
+    Drawable camStatDefault;
+    Drawable camStat1;
+    Drawable camStat2;
+    Drawable camStat3;
+    Drawable camStat4;
 
     int frameHeight = 1280;
     int frameWidth = 720;
@@ -53,6 +64,9 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     private Timer timer;
 
     private Boolean brightness_ok = false;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +100,40 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         DrawOnTop mDraw = new DrawOnTop(this);
         addContentView(mDraw, new ViewGroup.LayoutParams
                 (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        //************************아래는 현재 촬영중인 포맷의 status view를 선택하기 위한 코드 ************************
+        imgStatus = (ImageView)findViewById(R.id.imageView);
+
+        camStatDefault = getResources().getDrawable(R.mipmap.camera_status_5);
+        camStat1 = getResources().getDrawable(R.mipmap.camera_status_1);
+        camStat2 = getResources().getDrawable(R.mipmap.camera_status_2);
+        camStat3 = getResources().getDrawable(R.mipmap.camera_status_3);
+        camStat4 = getResources().getDrawable(R.mipmap.camera_status_4);
+        Intent intent = getIntent();
+        view = intent.getIntExtra("view", 5);
+        Toast.makeText(CameraActivity.this,"ButtonView"+view,Toast.LENGTH_SHORT).show();
+
+        switch(view)
+        {
+
+            case 1:
+                imgStatus.setImageDrawable(camStat1);
+                break;
+            case 2:
+                imgStatus.setImageDrawable(camStat2);
+                break;
+            case 3:
+                imgStatus.setImageDrawable(camStat3);
+                break;
+            case 4:
+                imgStatus.setImageDrawable(camStat4);
+                break;
+            case 5:
+                imgStatus.setImageDrawable(camStatDefault);
+                break;
+
+        }
+        //***********************************************************************************************************
     }
 
     private void initListener() {
@@ -158,18 +206,41 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     }
 
     private void initView() {
-        linearLayout = (LinearLayout) findViewById(R.id.camera_linearlayout_videoview);
-        videoView = (VideoView) findViewById(R.id.videoView);
-
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(700, 820);
-        videoView.setLayoutParams(layoutParams);
 
         Intent intent = getIntent();
         width = intent.getIntExtra("width", 0);
         height = intent.getIntExtra("height", 0);
 
+        float screenWidth = getContext().getResources().getDisplayMetrics().widthPixels;
+        float screenHeight = getContext().getResources().getDisplayMetrics().heightPixels;
+
+        Toast.makeText(CameraActivity.this,width+"+"+height,Toast.LENGTH_SHORT).show();
+        linearLayout = (LinearLayout) findViewById(R.id.camera_linearlayout_videoview);
+        videoView = (VideoView) findViewById(R.id.videoView);
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(1200, 820);
+        videoView.setLayoutParams(layoutParams);
+
+
+
         button3 = (ImageButton) findViewById(R.id.camera_btn_back);
         button4 = (ImageButton) findViewById(R.id.camera_btn_gal);
+
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent Intent1 = new Intent(CameraActivity.this, AfterActivity.class);
+                startActivity(Intent1);
+                finish();
+
+            }
+        });
+        button4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(CameraActivity.this, "Gallery", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         layoutParams.setMargins(0, 200, 0, 0);
         layoutParams.gravity = Gravity.CENTER;
@@ -177,6 +248,13 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
         //  textView = (TextView) findViewById(R.id.textview);
     }
+
+    //************************현재 context를 불러오는 함수
+    private Context getContext()
+    {
+        return getApplicationContext();
+    }
+
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
@@ -373,19 +451,11 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        /*
-        videoView.setVisibility(View.GONE);
-        holder.removeCallback(this);
-        camera.setPreviewCallback(null);
-        camera.stopPreview();
-        camera.release();
-        camera = null;
-        sensorManager.unregisterListener(this);
-         */
-        Intent intent = new Intent(CameraActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
+        public void onBackPressed() {
+            Intent Intent2 = new Intent(CameraActivity.this, CautionActivity.class);
+            startActivity(Intent2);
+            finish();
+        }
     }
-}
+
+

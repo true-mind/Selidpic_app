@@ -7,9 +7,9 @@
     <item
         android:state_pressed="false"
         android:drawable="@mipmap/main_button4"/>
-    <!--
+
     <item
         android:state_selected="true"
         android:drawable="@mipmap/main_button4_selected"/>
-        -->
+
 </selector>

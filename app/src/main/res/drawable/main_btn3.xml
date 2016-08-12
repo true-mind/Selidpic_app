@@ -4,12 +4,13 @@
     <item
         android:state_pressed="true"
         android:drawable="@mipmap/main_button3_pressed"/>
+
     <item
         android:state_pressed="false"
         android:drawable="@mipmap/main_button3"/>
-    <!--
+
     <item
         android:state_selected="true"
         android:drawable="@mipmap/main_button3_selected"/>
-        -->
+
 </selector>
