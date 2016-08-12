@@ -28,6 +28,8 @@ public class AfterActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(AfterActivity.this, "Share", Toast.LENGTH_SHORT).show();
+                Intent intent = getPackageManager().getLaunchIntentForPackage("packageName");
+                startActivity(intent);
 
 
             }
