@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.ex1.AfterActivity"
+    tools:context="com.jisu.selidpic.AfterActivity"
     android:orientation="vertical"
     android:background="@mipmap/after_back"
     android:weightSum="1">

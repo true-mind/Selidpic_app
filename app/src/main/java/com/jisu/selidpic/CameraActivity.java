@@ -264,6 +264,17 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     {
         return getApplicationContext();
     }
+
+
+
+    MediaPlayer.OnVideoSizeChangedListener sizeChangeListener = new MediaPlayer.OnVideoSizeChangedListener() {
+        @Override
+        public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+        }
+    };
+
+
+
     //************************비디오뷰의 원본비율을 유지한채로 사이즈를 조절하는 함수부
     //비디오뷰의 사이즈가 변경됨을 핸들러를 통해 알려줌
     //디버깅 필요 -애플리케이션 중단됨
