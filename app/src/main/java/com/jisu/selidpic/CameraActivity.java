@@ -13,6 +13,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
@@ -38,6 +39,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     static Camera camera;
     SurfaceHolder holder;
     VideoView videoView;
+
     ImageButton button3, button4;
     LinearLayout linearLayout;
     TextView textView;
@@ -48,6 +50,13 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     Drawable camStat2;
     Drawable camStat3;
     Drawable camStat4;
+
+    //********************아래의 네줄은 차례대로 width와 height의 최대 픽셀을 가져오는 코드와,
+    //그 최대 픽셀을 기준으로 height부의 위, 아래 margin, 그리고 그 margin을 제외한 비디오뷰의 높이를 설정하는 코드임
+    int screenWidth = getContext().getResources().getDisplayMetrics().widthPixels;
+    int screenHeight = getContext().getResources().getDisplayMetrics().heightPixels;
+    int camMargin = (int)(screenHeight * 0.137);
+    int camHeight = (int)(screenHeight * 0.726);
 
     int frameHeight = 1280;
     int frameWidth = 720;
@@ -97,9 +106,9 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                 });
             }
         }, 5000, 5000);
-        DrawOnTop mDraw = new DrawOnTop(this);
-        addContentView(mDraw, new ViewGroup.LayoutParams
-                (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        //DrawOnTop mDraw = new DrawOnTop(this);
+        //addContentView(mDraw, new ViewGroup.LayoutParams
+        //        (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         //************************아래는 현재 촬영중인 포맷의 status view를 선택하기 위한 코드 ************************
         imgStatus = (ImageView)findViewById(R.id.imageView);
@@ -211,14 +220,14 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         width = intent.getIntExtra("width", 0);
         height = intent.getIntExtra("height", 0);
 
-        float screenWidth = getContext().getResources().getDisplayMetrics().widthPixels;
-        float screenHeight = getContext().getResources().getDisplayMetrics().heightPixels;
+        Toast.makeText(CameraActivity.this,"screenWidth"+screenWidth+"+"+"screenHeight"+screenHeight,Toast.LENGTH_SHORT).show();
 
         Toast.makeText(CameraActivity.this,width+"+"+height,Toast.LENGTH_SHORT).show();
+
         linearLayout = (LinearLayout) findViewById(R.id.camera_linearlayout_videoview);
         videoView = (VideoView) findViewById(R.id.videoView);
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(1200, 820);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(screenWidth, camHeight);
         videoView.setLayoutParams(layoutParams);
 
 
@@ -242,7 +251,8 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
             }
         });
 
-        layoutParams.setMargins(0, 200, 0, 0);
+        //************************camMargin설정 (위, 아래)
+        layoutParams.setMargins(0, camMargin, 0, camMargin);
         layoutParams.gravity = Gravity.CENTER;
 
 
@@ -254,6 +264,28 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     {
         return getApplicationContext();
     }
+    //************************비디오뷰의 원본비율을 유지한채로 사이즈를 조절하는 함수부
+    //비디오뷰의 사이즈가 변경됨을 핸들러를 통해 알려줌
+    //디버깅 필요 -애플리케이션 중단됨
+/*
+    private MediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedListener =
+            new MediaPlayer.OnVideoSizeChangedListener() {
+                public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(screenWidth, camHeight);
+                    videoView.setLayoutParams(layoutParams);}
+            };
+
+    private MediaPlayer.OnPreparedListener onPrepared = new MediaPlayer.OnPreparedListener() {
+        public void onPrepared(MediaPlayer mp) {
+       mp.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
+
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(screenWidth, camHeight);
+            videoView.setLayoutParams(layoutParams);
+        }
+    };
+
+    videoView.setOnPreparedListener(onPrepared);
+*/
 
 
     @Override
@@ -348,7 +380,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         }
         super.onStop();
     }
-
+/*
     public class DrawOnTop extends View {
 
         public DrawOnTop(Context context) {
@@ -358,12 +390,12 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         @Override
         protected void onDraw(Canvas canvas) {
             Paint paint = new Paint();
-            /*
+
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(Color.BLACK);
             paint.setTextSize(20);
             canvas.drawText("Test Text", 20, 20, paint);
-            */
+            *//*
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(2);
             paint.setColor(Color.RED);
@@ -387,7 +419,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
             super.onDraw(canvas);
         }
     }
-
+*/
     private void spoidRGB() {
         for (int i = 0, yp = 0; i < frameHeight; i++) {
             int uvp = frameSize + (i >> 1) * frameWidth, u = 0, v = 0;
