@@ -3,7 +3,11 @@ package com.jisu.selidpic;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -11,6 +15,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -21,6 +26,8 @@ import android.widget.Toast;
 import android.widget.VideoView;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
+
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import android.os.Handler;
@@ -30,9 +37,9 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     static Camera camera;
     SurfaceHolder holder;
     VideoView videoView;
+    LinearLayout linearLayout;
 
     ImageButton button3, button4;
-    LinearLayout linearLayout;
     TextView textView;
 
     ImageView imgStatus;
@@ -205,10 +212,17 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         }
         camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
         Camera.Parameters params = camera.getParameters();
+
         params.setPreviewFpsRange(15000, 30000);
-        params.setPreviewSize(screenWidth, camHeight);
-        rgb = new int[frameSize];
-        ///params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO); //video 화면이 변할 때마다 자동 포커스 맞춤
+
+        //카메라에서 찍을 수 있는 모든 사이즈를 가지고 와서 그 중에 하나를 선택한다.
+        List<Camera.Size> pictureSizes = params.getSupportedPictureSizes();
+        Camera.Size optimalSize = getOptimalPreviewSize(pictureSizes, screenWidth, camHeight);
+        params.setPreviewSize(optimalSize.width, optimalSize.height);
+
+        //params.setPreviewSize(screenWidth, camHeight);
+        //params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO); //video 화면이 변할 때마다 자동 포커스 맞춤
+        //rgb = new int[frameSize];
 
         params.setPreviewFormat(ImageFormat.NV21);
         params.setPreviewFrameRate(30);
@@ -218,6 +232,43 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         holder = videoView.getHolder();
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         holder.addCallback(this);
+    }
+    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int width, int height) {
+        final double ASPECT_TOLERANCE = 0.05;
+        double targetRatio = (double) width / height;
+        if (sizes == null) {
+            return null;
+        }
+
+        Camera.Size optimalSize = null;
+        double minDiff = Double.MAX_VALUE;
+
+        int targetHeight = height;
+
+        // Try to find an size match aspect ratio and size
+        for (Camera.Size size : sizes) {
+            double ratio = (double) size.width / size.height;
+            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) {
+                continue;
+            }
+            if (Math.abs(size.height - targetHeight) < minDiff) {
+                optimalSize = size;
+                minDiff = Math.abs(size.height - targetHeight);
+            }
+        }
+
+        // Cannot find the one match the aspect ratio, ignore the requirement
+        if (optimalSize == null) {
+            minDiff = Double.MAX_VALUE;
+            for (Camera.Size size : sizes) {
+                if (Math.abs(size.height - targetHeight) < minDiff) {
+                    optimalSize = size;
+                    minDiff = Math.abs(size.height - targetHeight);
+                }
+            }
+        }
+        Log.i("optimal size", ""+optimalSize.width+" x "+optimalSize.height);
+        return optimalSize;
     }
 
     private void initSensor() {
@@ -238,21 +289,24 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
         Toast.makeText(CameraActivity.this,width+"+"+height,Toast.LENGTH_SHORT).show();
 
-        linearLayout = (LinearLayout) findViewById(R.id.camera_linearlayout_videoview);
         videoView = (VideoView) findViewById(R.id.videoView);
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(screenWidth, camHeight);
+
         videoView.setLayoutParams(layoutParams);
 
         button3 = (ImageButton) findViewById(R.id.camera_btn_back);
         button4 = (ImageButton) findViewById(R.id.camera_btn_gal);
+        linearLayout = (LinearLayout) findViewById(R.id.camera_linearlayout_videoview);
 
         //************************camMargin설정 (위, 아래)
+
         layoutParams.setMargins(0, camMargin, 0, camMargin);
         layoutParams.gravity = Gravity.CENTER;
 
         videoView.setOnPreparedListener(onPrepared);
     }
+
 
     //************************현재 context를 불러오는 함수
     private Context getContext()
@@ -317,23 +371,6 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
         sensorManager.unregisterListener(this);
-        /*
-        try {
-            //camera.reconnect();
-
-            if(camera!=null){
-                holder.removeCallback(this);
-                camera.setPreviewCallback(null);
-                //videoView.setVisibility(View.GONE);
-                //camera.setPreviewDisplay(null);
-                camera.stopPreview();
-                camera.release();
-
-                camera = null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
     }
 
     @Override
@@ -383,7 +420,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         }
         super.onStop();
     }
-    /*
+
         public class DrawOnTop extends View {
 
             public DrawOnTop(Context context) {
@@ -398,7 +435,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                 paint.setColor(Color.BLACK);
                 paint.setTextSize(20);
                 canvas.drawText("Test Text", 20, 20, paint);
-                *//*
+
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(2);
             paint.setColor(Color.RED);
@@ -422,7 +459,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
             super.onDraw(canvas);
         }
     }
-*/
+
     private void spoidRGB() {
         for (int i = 0, yp = 0; i < frameHeight; i++) {
             int uvp = frameSize + (i >> 1) * frameWidth, u = 0, v = 0;

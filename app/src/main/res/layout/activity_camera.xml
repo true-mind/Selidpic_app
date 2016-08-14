@@ -95,31 +95,39 @@
         android:orientation="vertical"
         android:weightSum="1">
 
-        <Space
-            android:layout_width="1px"
-            android:layout_height="0px"
-            android:layout_weight="0.1368"/>
-
         <VideoView
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:id="@+id/videoView"
-            android:layout_gravity="center"
-            android:layout_weight="0.7264"/>
-
-        <Space
-            android:layout_width="1px"
-            android:layout_height="0px"
-            android:layout_weight="0.1368"/>
-
+            android:layout_weight="1"/>
         <!--
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hello World!"
-            android:layout_weight="0.05"
-            android:id="@+id/textview"/>
--->
+
+                <Space
+                    android:layout_width="1px"
+                    android:layout_height="0px"
+                    android:layout_weight="0.1368"/>
+
+
+                <VideoView
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:id="@+id/videoView"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.7264"/>
+
+                <Space
+                    android:layout_width="1px"
+                    android:layout_height="0px"
+                    android:layout_weight="0.1368"/>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hello World!"
+                    android:layout_weight="0.05"
+                    android:id="@+id/textview"/>
+         -->
     </LinearLayout>
 
 </FrameLayout>
