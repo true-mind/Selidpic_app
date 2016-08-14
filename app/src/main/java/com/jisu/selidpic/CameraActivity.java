@@ -3,11 +3,7 @@ package com.jisu.selidpic;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ImageFormat;
-import android.graphics.Paint;
-import android.graphics.Path;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -18,18 +14,13 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
-import android.app.Activity;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.widget.ImageView;
-import android.widget.RadioGroup;
-import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 import android.os.Handler;
@@ -53,10 +44,9 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
     //********************아래의 네줄은 차례대로 width와 height의 최대 픽셀을 가져오는 코드와,
     //그 최대 픽셀을 기준으로 height부의 위, 아래 margin, 그리고 그 margin을 제외한 비디오뷰의 높이를 설정하는 코드임
-    int screenWidth = getContext().getResources().getDisplayMetrics().widthPixels;
-    int screenHeight = getContext().getResources().getDisplayMetrics().heightPixels;
-    int camMargin = (int)(screenHeight * 0.137);
-    int camHeight = (int)(screenHeight * 0.726);
+    int screenWidth, screenHeight;
+    int camMargin;// = (int)(screenHeight * 0.137);
+    int camHeight;// = (int)(screenHeight * 0.726);
 
     int frameHeight = 1280;
     int frameWidth = 720;
@@ -158,23 +148,44 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                 finish();
             }
         });
+
+        button4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(CameraActivity.this, "Gallery", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                startActivityForResult(intent,1);
+
+            }
+        });
     }
 
     @Override
     protected void onResume() {
-        super.onResume();
         sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI);
+        videoView.setVisibility(View.VISIBLE);
+        if(camera==null){
+            setCamera();
+        }
 
+        camera.setPreviewCallback(this);
+        camera.startPreview();
+        super.onResume();
     }
 
     @Override
     protected void onPause() {
         videoView.setVisibility(View.GONE);
         holder.removeCallback(this);
-        camera.setPreviewCallback(null);
-        camera.stopPreview();
-        camera.release();
-        camera = null;
+        if(camera!=null){
+            camera.setPreviewCallback(null);
+            camera.stopPreview();
+            camera.release();
+            camera = null;
+        }
+
         sensorManager.unregisterListener(this);
         super.onPause();
     }
@@ -195,9 +206,9 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
         Camera.Parameters params = camera.getParameters();
         params.setPreviewFpsRange(15000, 30000);
-        params.setPreviewSize(1280, 720);
+        params.setPreviewSize(screenWidth, camHeight);
         rgb = new int[frameSize];
-        //params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO); //video 화면이 변할 때마다 자동 포커스 맞춤
+        ///params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO); //video 화면이 변할 때마다 자동 포커스 맞춤
 
         params.setPreviewFormat(ImageFormat.NV21);
         params.setPreviewFrameRate(30);
@@ -215,11 +226,14 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     }
 
     private void initView() {
-
         Intent intent = getIntent();
         width = intent.getIntExtra("width", 0);
         height = intent.getIntExtra("height", 0);
 
+        screenWidth = getContext().getResources().getDisplayMetrics().widthPixels;
+        screenHeight = getContext().getResources().getDisplayMetrics().heightPixels;
+        camMargin = (int)(screenHeight * 0.137);
+        camHeight = (int)(screenHeight * 0.726);
         Toast.makeText(CameraActivity.this,"screenWidth"+screenWidth+"+"+"screenHeight"+screenHeight,Toast.LENGTH_SHORT).show();
 
         Toast.makeText(CameraActivity.this,width+"+"+height,Toast.LENGTH_SHORT).show();
@@ -230,39 +244,22 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(screenWidth, camHeight);
         videoView.setLayoutParams(layoutParams);
 
-
-
         button3 = (ImageButton) findViewById(R.id.camera_btn_back);
         button4 = (ImageButton) findViewById(R.id.camera_btn_gal);
-
-        button3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent Intent1 = new Intent(CameraActivity.this, AfterActivity.class);
-                startActivity(Intent1);
-                finish();
-
-            }
-        });
-        button4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(CameraActivity.this, "Gallery", Toast.LENGTH_SHORT).show();
-            }
-        });
 
         //************************camMargin설정 (위, 아래)
         layoutParams.setMargins(0, camMargin, 0, camMargin);
         layoutParams.gravity = Gravity.CENTER;
 
-
-        //  textView = (TextView) findViewById(R.id.textview);
+        videoView.setOnPreparedListener(onPrepared);
     }
 
     //************************현재 context를 불러오는 함수
     private Context getContext()
     {
-        return getApplicationContext();
+        Context mContext;
+        mContext = getApplicationContext();
+        return mContext;
     }
 
 
@@ -278,25 +275,26 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     //************************비디오뷰의 원본비율을 유지한채로 사이즈를 조절하는 함수부
     //비디오뷰의 사이즈가 변경됨을 핸들러를 통해 알려줌
     //디버깅 필요 -애플리케이션 중단됨
-/*
+
     private MediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedListener =
             new MediaPlayer.OnVideoSizeChangedListener() {
                 public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(screenWidth, camHeight);
-                    videoView.setLayoutParams(layoutParams);}
+                    videoView.setLayoutParams(layoutParams);
+                }
             };
 
     private MediaPlayer.OnPreparedListener onPrepared = new MediaPlayer.OnPreparedListener() {
         public void onPrepared(MediaPlayer mp) {
-       mp.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
+            mp.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
 
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(screenWidth, camHeight);
             videoView.setLayoutParams(layoutParams);
         }
     };
 
-    videoView.setOnPreparedListener(onPrepared);
-*/
+
+
 
 
     @Override
@@ -378,35 +376,29 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     @Override
     protected void onStop() {
         sensorManager.unregisterListener(this);
-        try{
-            /*
-            camera.setPreviewCallback(null);
+        if(camera != null){
             camera.stopPreview();
             camera.release();
-            camera = null;
-            videoView.setVisibility(View.GONE);
-            holder.removeCallback(this);*/
-        }catch(Exception e){
-            e.printStackTrace();
+            camera=null;
         }
         super.onStop();
     }
-/*
-    public class DrawOnTop extends View {
+    /*
+        public class DrawOnTop extends View {
 
-        public DrawOnTop(Context context) {
-            super(context);
-        }
+            public DrawOnTop(Context context) {
+                super(context);
+            }
 
-        @Override
-        protected void onDraw(Canvas canvas) {
-            Paint paint = new Paint();
+            @Override
+            protected void onDraw(Canvas canvas) {
+                Paint paint = new Paint();
 
-            paint.setStyle(Paint.Style.FILL);
-            paint.setColor(Color.BLACK);
-            paint.setTextSize(20);
-            canvas.drawText("Test Text", 20, 20, paint);
-            *//*
+                paint.setStyle(Paint.Style.FILL);
+                paint.setColor(Color.BLACK);
+                paint.setTextSize(20);
+                canvas.drawText("Test Text", 20, 20, paint);
+                *//*
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(2);
             paint.setColor(Color.RED);
@@ -494,11 +486,11 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     }
 
     @Override
-        public void onBackPressed() {
-            Intent Intent2 = new Intent(CameraActivity.this, CautionActivity.class);
-            startActivity(Intent2);
-            finish();
-        }
+    public void onBackPressed() {
+        Intent Intent2 = new Intent(CameraActivity.this, CautionActivity.class);
+        startActivity(Intent2);
+        finish();
     }
+}
 
 

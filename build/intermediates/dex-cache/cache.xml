@@ -1,3 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
 
+    <item
+        jar="/Users/jisu/Documents/Selidpic_app/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.0"
+        sha1="4fcf0b1879f8caf497c073e1432d398e9e2988c1">
+        <dex dex="/Users/jisu/Documents/Selidpic_app/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-appcompat-v7-23.0.0_f6fdde85fbcf2bdbffef073dffb58631b91650b1/classes.dex" />
+    </item>
+    <item
+        jar="/Users/jisu/Documents/Selidpic_app/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/8.1.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.0"
+        sha1="d0dda274b703dd9c5bb056867649d22b4171ae7d">
+        <dex dex="/Users/jisu/Documents/Selidpic_app/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-basement-8.1.0_fbf11174ea7880acd7d1dd32949d9148eddf670b/classes.dex" />
+    </item>
+    <item
+        jar="/Users/jisu/Documents/Selidpic_app/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.0"
+        sha1="8413c27b45b7fe61dca4a98159f65e2cee215f5a">
+        <dex dex="/Users/jisu/Documents/Selidpic_app/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-v4-23.0.0_fc25abbd9c320bf5c6b715dc4b918cbb2604d2cb/classes.dex" />
+    </item>
+    <item
+        jar="/Users/jisu/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.0.0/support-annotations-23.0.0.jar"
+        jumboMode="true"
+        revision="23.0.0"
+        sha1="990e7f98a7bad86a40b1f0bcfeb039023afd0839">
+        <dex dex="/Users/jisu/Documents/Selidpic_app/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-annotations-23.0.0_9109389cb85da876dec050e74ff3cd42b5223f34/classes.dex" />
+    </item>
+    <item
+        jar="/Users/jisu/Documents/Selidpic_app/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-appindexing/8.1.0/jars/classes.jar"
+        jumboMode="true"
+        revision="23.0.0"
+        sha1="4477ea44f5ec5ad064022a22691732d7638ff197">
+        <dex dex="/Users/jisu/Documents/Selidpic_app/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-appindexing-8.1.0_00face2e9a3c3bb60ccecdc59a92cdf248b17d17/classes.dex" />
+    </item>
+    <item
+        jar="/Users/jisu/Documents/Selidpic_app/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="23.0.0"
+        sha1="7931ff51a38a1c0af0474c2b60c1941c9f624b5b">
+        <dex dex="/Users/jisu/Documents/Selidpic_app/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_b4b3b133ca163d43f3e3d9d55a0ad331a0059bb8/classes.dex" />
+    </item>
+    <item
+        jar="/Users/jisu/Documents/Selidpic_app/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        revision="23.0.0"
+        sha1="20eef828744cb55d3b9875cfa3a81e464bd4b47f">
+        <dex dex="/Users/jisu/Documents/Selidpic_app/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_d5006ec6d30f1f3115c1996cd464d018262fc5fe/classes.dex" />
+    </item>
+    <item
+        jar="/Users/jisu/Documents/Selidpic_app/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.0/jars/libs/internal_impl-23.0.0.jar"
+        jumboMode="true"
+        revision="23.0.0"
+        sha1="8bd336eeae661e8311330284897ee07f8ebaa297">
+        <dex dex="/Users/jisu/Documents/Selidpic_app/app/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-23.0.0_136dba5d5e255cddea2fa1bb59b651494ba258de/classes.dex" />
+    </item>
+
+</items>
