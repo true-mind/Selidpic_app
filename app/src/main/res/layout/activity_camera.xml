@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
     android:layout_width="match_parent">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -24,7 +25,7 @@
             <Space
                 android:layout_width="0px"
                 android:layout_height="1px"
-                android:layout_weight="0.16145"/>
+                android:layout_weight="0.07"/>
 
             <ImageView
                 android:layout_width="0px"
@@ -36,7 +37,23 @@
             <Space
                 android:layout_width="0px"
                 android:layout_height="1px"
-                android:layout_weight="0.16145"/>
+                android:layout_weight="0.042"/>
+
+            <ToggleButton
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="Auto/Manual"
+                android:textColor="#000000"
+                android:id="@+id/toggleButton"
+                android:textOff="▲"
+                android:textOn="▽"
+                android:background="@drawable/camera_toggle"
+                android:layout_weight="0.1409"/>
+
+            <Space
+                android:layout_width="0px"
+                android:layout_height="1px"
+                android:layout_weight="0.07"/>
         </LinearLayout>
 
         <Space
@@ -66,7 +83,19 @@
             <Space
                 android:layout_width="0px"
                 android:layout_height="1px"
-                android:layout_weight="0.59006"/>
+                android:layout_weight="0.081222"/>
+
+            <ImageButton
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:id="@+id/camera_switch"
+                android:layout_weight="0.42762"
+                android:background="@null"/>
+
+            <Space
+                android:layout_width="0px"
+                android:layout_height="1px"
+                android:layout_weight="0.081222"/>
 
             <ImageButton
                 android:layout_width="0px"
@@ -94,40 +123,40 @@
         android:id="@+id/camera_linearlayout_videoview"
         android:orientation="vertical"
         android:weightSum="1">
-
-        <VideoView
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:id="@+id/videoView"
-            android:layout_weight="1"/>
         <!--
-
-                <Space
-                    android:layout_width="1px"
-                    android:layout_height="0px"
-                    android:layout_weight="0.1368"/>
-
-
                 <VideoView
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:id="@+id/videoView"
-                    android:layout_gravity="center"
-                    android:layout_weight="0.7264"/>
+                    android:layout_weight="1"/>
+                -->
 
-                <Space
-                    android:layout_width="1px"
-                    android:layout_height="0px"
-                    android:layout_weight="0.1368"/>
+                        <Space
+                            android:layout_width="1px"
+                            android:layout_height="0px"
+                            android:layout_weight="0.1368"/>
 
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Hello World!"
-                    android:layout_weight="0.05"
-                    android:id="@+id/textview"/>
-         -->
+                        <VideoView
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:id="@+id/videoView"
+                            android:layout_gravity="center"
+                            android:layout_weight="0.7264"/>
+
+                        <Space
+                            android:layout_width="1px"
+                            android:layout_height="0px"
+                            android:layout_weight="0.1368"/>
+
+        <!--
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Hello World!"
+                            android:layout_weight="0.05"
+                            android:id="@+id/textview"/>
+                 -->
     </LinearLayout>
 
 </FrameLayout>

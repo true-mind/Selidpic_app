@@ -14,7 +14,10 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
@@ -23,10 +26,14 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 import android.widget.VideoView;
-import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
+import android.graphics.drawable.Drawable;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,18 +46,26 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     VideoView videoView;
     LinearLayout linearLayout;
 
-    ImageButton button3, button4;
+    ToggleButton toggleButton;
+
+    ImageButton button3, button4, camera_switch;
+
     TextView textView;
 
     ImageView imgStatus;
+
     Drawable camStatDefault;
     Drawable camStat1;
     Drawable camStat2;
     Drawable camStat3;
     Drawable camStat4;
 
+    Drawable camera_user;
+    Drawable camera_auto;
+
     //********************아래의 네줄은 차례대로 width와 height의 최대 픽셀을 가져오는 코드와,
     //그 최대 픽셀을 기준으로 height부의 위, 아래 margin, 그리고 그 margin을 제외한 비디오뷰의 높이를 설정하는 코드임
+
     int screenWidth, screenHeight;
     int camMargin;// = (int)(screenHeight * 0.137);
     int camHeight;// = (int)(screenHeight * 0.726);
@@ -71,7 +86,8 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
     private Boolean brightness_ok = false;
 
-
+    public static final int MEDIA_TYPE_IMAGE = 1;
+    public static final int MEDIA_TYPE_VIDEO = 2;
 
 
     @Override
@@ -82,6 +98,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         initListener();
         initSensor();
         setCamera();
+        camera_switch.setImageDrawable(camera_user);
         timer = new Timer(false);
         handler = new Handler();
         timer.schedule(new TimerTask() {
@@ -109,15 +126,15 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
         //************************아래는 현재 촬영중인 포맷의 status view를 선택하기 위한 코드 ************************
         imgStatus = (ImageView)findViewById(R.id.imageView);
-
         camStatDefault = getResources().getDrawable(R.mipmap.camera_status_5);
         camStat1 = getResources().getDrawable(R.mipmap.camera_status_1);
         camStat2 = getResources().getDrawable(R.mipmap.camera_status_2);
         camStat3 = getResources().getDrawable(R.mipmap.camera_status_3);
         camStat4 = getResources().getDrawable(R.mipmap.camera_status_4);
+        camera_user = getResources().getDrawable(R.drawable.camera_switch);
+        camera_auto = getResources().getDrawable(R.mipmap.camera_auto);
         Intent intent = getIntent();
         view = intent.getIntExtra("view", 5);
-        Toast.makeText(CameraActivity.this,"ButtonView"+view,Toast.LENGTH_SHORT).show();
 
         switch(view)
         {
@@ -167,6 +184,82 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
             }
         });
+
+        camera_switch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                final Uri fileUri;
+                // 아래 정의한 capture한 사진의 저장 method를 실행 한 후
+                fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE); // create a file to save the image
+                // 먼저 선언한 intent에 해당 file 명의 값을 추가로 저장한다.
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
+
+                // start the image capture Intent
+                // 해당 intent를 시작한다.
+                startActivityForResult(intent, 1);
+            }
+        });
+
+
+        toggleButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if(toggleButton.isChecked()){
+                    camera_switch.setClickable(true);
+                    camera_switch.setImageDrawable(camera_user);
+                }
+                else{
+                    camera_switch.setClickable(false);
+                    camera_switch.setImageDrawable(camera_auto);
+
+                }
+            }
+        });
+    }
+
+    private static Uri getOutputMediaFileUri(int type){
+        // 아래 capture한 사진이 저장될 file 공간을 생성하는 method를 통해 반환되는 File의 URI를 반환
+        return Uri.fromFile(getOutputMediaFile(type));
+    }
+
+    /** Create a File for saving an image or video */
+    private static File getOutputMediaFile(int type){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+
+        // 외부 저장소에 이 App을 통해 촬영된 사진만 저장할 directory 경로와 File을 연결
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "MyCameraApp");
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){ // 해당 directory가 아직 생성되지 않았을 경우 mkdirs(). 즉 directory를 생성한다.
+            if (! mediaStorageDir.mkdirs()){ // 만약 mkdirs()가 제대로 동작하지 않을 경우, 오류 Log를 출력한 뒤, 해당 method 종료
+                Log.d("MyCameraApp", "failed to create directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        // File 명으로 file의 생성 시간을 활용하도록 DateFormat 기능을 활용
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile;
+
+        if (type == MEDIA_TYPE_IMAGE){
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "IMG_"+ timeStamp + ".jpg");
+        } else if(type == MEDIA_TYPE_VIDEO) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "VID_"+ timeStamp + ".mp4");
+        } else {
+            return null;
+        }
+        return mediaFile; // 생성된 File valuable을 반환
     }
 
     @Override
@@ -216,8 +309,17 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         params.setPreviewFpsRange(15000, 30000);
 
         //카메라에서 찍을 수 있는 모든 사이즈를 가지고 와서 그 중에 하나를 선택한다.
+        /*
         List<Camera.Size> pictureSizes = params.getSupportedPictureSizes();
         Camera.Size optimalSize = getOptimalPreviewSize(pictureSizes, screenWidth, camHeight);
+        params.setPreviewSize(optimalSize.width, optimalSize.height);
+*/
+        List<Camera.Size> pictureSizes = params.getSupportedPictureSizes();
+        for(int i=0;i<pictureSizes.size();i++){
+            Log.d("MyTag", "Supported Picture Size : "+pictureSizes.get(i).width +" "+pictureSizes.get(i).height);
+        }
+        Camera.Size optimalSize = getOptimalPreviewSize(pictureSizes, screenWidth, camHeight);
+        Log.d("MyTag", "Optimal Preview Size : "+optimalSize.width+" "+optimalSize.height);
         params.setPreviewSize(optimalSize.width, optimalSize.height);
 
         //params.setPreviewSize(screenWidth, camHeight);
@@ -259,6 +361,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
         // Cannot find the one match the aspect ratio, ignore the requirement
         if (optimalSize == null) {
+            Log.d("MyTag", "optimalSize를 찾지 못함");
             minDiff = Double.MAX_VALUE;
             for (Camera.Size size : sizes) {
                 if (Math.abs(size.height - targetHeight) < minDiff) {
@@ -297,6 +400,8 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
         button3 = (ImageButton) findViewById(R.id.camera_btn_back);
         button4 = (ImageButton) findViewById(R.id.camera_btn_gal);
+        camera_switch = (ImageButton) findViewById(R.id.camera_switch);
+        toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
         linearLayout = (LinearLayout) findViewById(R.id.camera_linearlayout_videoview);
 
         //************************camMargin설정 (위, 아래)
@@ -337,6 +442,8 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                     videoView.setLayoutParams(layoutParams);
                 }
             };
+
+
 
     private MediaPlayer.OnPreparedListener onPrepared = new MediaPlayer.OnPreparedListener() {
         public void onPrepared(MediaPlayer mp) {
