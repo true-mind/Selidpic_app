@@ -78,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/camera_btn_back"
                 android:layout_weight="0.13591"
-                android:background="@mipmap/camera_btn_back"/>
+                android:background="@drawable/camera_btn_back"/>
 
             <Space
                 android:layout_width="0px"
@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/camera_btn_gal"
                 android:layout_weight="0.13591"
-                android:background="@mipmap/camera_btn_gal"/>
+                android:background="@drawable/camera_btn_gal"/>
 
             <Space
                 android:layout_width="0px"

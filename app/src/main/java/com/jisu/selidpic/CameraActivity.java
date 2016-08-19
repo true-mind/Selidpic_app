@@ -3,9 +3,12 @@ package com.jisu.selidpic;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.hardware.Camera;
@@ -31,7 +34,11 @@ import android.widget.VideoView;
 import android.widget.ImageView;
 import android.graphics.drawable.Drawable;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -40,12 +47,13 @@ import java.util.TimerTask;
 import android.os.Handler;
 
 public class CameraActivity extends Activity implements SurfaceHolder.Callback, Camera.PreviewCallback, SensorEventListener {
-    int width, height, cameraId, view;
+    int width, height, cameraId, statview;
     static Camera camera;
     SurfaceHolder holder;
     VideoView videoView;
     LinearLayout linearLayout;
 
+    Bitmap Picturetmp;
     ToggleButton toggleButton;
 
     ImageButton button3, button4, camera_switch;
@@ -89,7 +97,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
 
-
+    //******************************************************************************************************************************
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,7 +132,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         //addContentView(mDraw, new ViewGroup.LayoutParams
         //        (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        //************************아래는 현재 촬영중인 포맷의 status view를 선택하기 위한 코드 ************************
+        //************************아래는 현재 촬영중인 포맷의 status view를 선택하기 위한 코드 *********************************** ImageView (Camera Status)
         imgStatus = (ImageView)findViewById(R.id.imageView);
         camStatDefault = getResources().getDrawable(R.mipmap.camera_status_5);
         camStat1 = getResources().getDrawable(R.mipmap.camera_status_1);
@@ -134,9 +142,9 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         camera_user = getResources().getDrawable(R.drawable.camera_switch);
         camera_auto = getResources().getDrawable(R.mipmap.camera_auto);
         Intent intent = getIntent();
-        view = intent.getIntExtra("view", 5);
+        statview = intent.getIntExtra("view", 5);
 
-        switch(view)
+        switch(statview)
         {
 
             case 1:
@@ -156,9 +164,9 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                 break;
 
         }
-        //***********************************************************************************************************
-    }
 
+    }
+    //****************************************************************************************************************************** Button and switches
     private void initListener() {
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,17 +196,24 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         camera_switch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                Bitmap bm;
 
-                final Uri fileUri;
-                // 아래 정의한 capture한 사진의 저장 method를 실행 한 후
-                fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE); // create a file to save the image
-                // 먼저 선언한 intent에 해당 file 명의 값을 추가로 저장한다.
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
+                camera.takePicture(shutterCallback, rawCallback, mPicutureListener);
 
-                // start the image capture Intent
-                // 해당 intent를 시작한다.
-                startActivityForResult(intent, 1);
+                //화면캡쳐부분
+                videoView.getRootView();
+                videoView.setDrawingCacheEnabled(true);
+                bm = videoView.getDrawingCache();
+
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream() ;
+                    bm.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    byte[] byteArray = stream.toByteArray();
+
+                Intent intent = new Intent(CameraActivity.this, AfterActivity.class);
+                intent.putExtra("image",byteArray);
+                startActivity(intent);
+                finish();
+
             }
         });
 
@@ -221,46 +236,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         });
     }
 
-    private static Uri getOutputMediaFileUri(int type){
-        // 아래 capture한 사진이 저장될 file 공간을 생성하는 method를 통해 반환되는 File의 URI를 반환
-        return Uri.fromFile(getOutputMediaFile(type));
-    }
-
-    /** Create a File for saving an image or video */
-    private static File getOutputMediaFile(int type){
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
-
-        // 외부 저장소에 이 App을 통해 촬영된 사진만 저장할 directory 경로와 File을 연결
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "MyCameraApp");
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
-
-        // Create the storage directory if it does not exist
-        if (! mediaStorageDir.exists()){ // 해당 directory가 아직 생성되지 않았을 경우 mkdirs(). 즉 directory를 생성한다.
-            if (! mediaStorageDir.mkdirs()){ // 만약 mkdirs()가 제대로 동작하지 않을 경우, 오류 Log를 출력한 뒤, 해당 method 종료
-                Log.d("MyCameraApp", "failed to create directory");
-                return null;
-            }
-        }
-
-        // Create a media file name
-        // File 명으로 file의 생성 시간을 활용하도록 DateFormat 기능을 활용
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile;
-
-        if (type == MEDIA_TYPE_IMAGE){
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_"+ timeStamp + ".jpg");
-        } else if(type == MEDIA_TYPE_VIDEO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_"+ timeStamp + ".mp4");
-        } else {
-            return null;
-        }
-        return mediaFile; // 생성된 File valuable을 반환
-    }
+    //****************************************************************************************************************************** Video view resume, pause
 
     @Override
     protected void onResume() {
@@ -289,6 +265,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         sensorManager.unregisterListener(this);
         super.onPause();
     }
+    //****************************************************************************************************************************** Camera Size setup, basic (optimal size)
 
     private void setCamera() {
         cameraId = 0;
@@ -378,7 +355,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
     }
-
+    //****************************************************************************************************************************** VideoView size crop,
     private void initView() {
         Intent intent = getIntent();
         width = intent.getIntExtra("width", 0);
@@ -411,24 +388,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
         videoView.setOnPreparedListener(onPrepared);
     }
-
-
-    //************************현재 context를 불러오는 함수
-    private Context getContext()
-    {
-        Context mContext;
-        mContext = getApplicationContext();
-        return mContext;
-    }
-
-
-
-    MediaPlayer.OnVideoSizeChangedListener sizeChangeListener = new MediaPlayer.OnVideoSizeChangedListener() {
-        @Override
-        public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-        }
-    };
-
+//******************************************************************************************************************************
 
 
     //************************비디오뷰의 원본비율을 유지한채로 사이즈를 조절하는 함수부
@@ -454,8 +414,74 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         }
     };
 
+    MediaPlayer.OnVideoSizeChangedListener sizeChangeListener = new MediaPlayer.OnVideoSizeChangedListener() {
+        @Override
+        public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+        }
+    };
+//******************************************************************************************************************************
+    private Context getContext()//************************현재 context를 불러오는 함수
+    {
+        Context mContext;
+        mContext = getApplicationContext();
+        return mContext;
+    }
+
+//****************************************************************************************************************************** File save directory
 
 
+//****************************************************************************************************************************** TakePicture에 필요한 함수들
+
+
+    private void showScreen(Bitmap bm) {
+
+    }
+
+    Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
+        public void onShutter() {
+            Log.d("MyTag", "onShutter'd");
+        }
+    };
+
+    Camera.PictureCallback rawCallback = new Camera.PictureCallback() {
+        public void onPictureTaken(byte[] data, Camera camera) {
+            Log.d("MyTag", "onPictureTaken - raw");
+        }
+    };
+    private Camera.PictureCallback mPicutureListener =
+            new Camera.PictureCallback() {
+                public void onPictureTaken(byte[] data, Camera camera) {
+                    Log.d("MyTag", "Picture Taken");
+                    if (data != null) {
+                        Log.d("MyTag", "JPEG Picture Taken");
+                        BitmapFactory.Options options =
+                                new BitmapFactory.Options();
+                        options.inSampleSize = 2;
+                        Bitmap bitmap =BitmapFactory.decodeByteArray(
+                                data, 0, data.length);  //bitmap 변수에 사진을 저장
+
+                        Matrix matrix = new Matrix();
+                        // rotate the Bitmap
+                        matrix.postRotate(90);
+                        // recreate the new Bitmap
+                        Bitmap rotateBitmap = Bitmap.createBitmap(bitmap, 0, 0,
+                                bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
+                    }
+                }
+            };
+
+    @Override
+    public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+        camera.setPreviewCallback(this);
+    }
+
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+        sensorManager.unregisterListener(this);
+    }
+//******************************************************************************************************************************
 
 
     @Override
@@ -470,27 +496,16 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-        camera.setPreviewCallback(this);
-    }
-
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-        sensorManager.unregisterListener(this);
-    }
-
-    @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
         for (int i = 0; i < frameSize; i++) {
             myData[i] = data[i];
         }
-        /*
-        textView.setText("Data: "+data.toString());
-        textView.setHighlightColor(Color.WHITE);
-        textView.setTextColor(Color.WHITE);
-        textView.setShadowLayer(2.0f, 1.0f, 1.0f, Color.BLACK) ;
-        */
+
+        //textView.setText("Data: "+data.toString());
+        //textView.setHighlightColor(Color.WHITE);
+        //textView.setTextColor(Color.WHITE);
+        //textView.setShadowLayer(2.0f, 1.0f, 1.0f, Color.BLACK) ;
+
     }
 
     @Override
@@ -527,7 +542,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         }
         super.onStop();
     }
-
+    //****************************************************************************************************************************** DrawOnTop
         public class DrawOnTop extends View {
 
             public DrawOnTop(Context context) {
@@ -566,7 +581,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
             super.onDraw(canvas);
         }
     }
-
+    //****************************************************************************************************************************** SpoidRGB
     private void spoidRGB() {
         for (int i = 0, yp = 0; i < frameHeight; i++) {
             int uvp = frameSize + (i >> 1) * frameWidth, u = 0, v = 0;
@@ -628,7 +643,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
         return resultRGB;
     }
-
+    //****************************************************************************************************************************** Softkey - back
     @Override
     public void onBackPressed() {
         Intent Intent2 = new Intent(CameraActivity.this, CautionActivity.class);
