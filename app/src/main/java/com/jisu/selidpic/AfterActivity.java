@@ -4,8 +4,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -18,8 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by 현석 on 2016-08-09.
@@ -28,7 +33,7 @@ public class AfterActivity extends Activity {
 
     ImageButton btn1, btn2, btn3, btn4;
     ImageView imageView2;
-    Bitmap image;
+    Bitmap image, rounded_image;
     String filename;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +43,8 @@ public class AfterActivity extends Activity {
         byte[] arr = getIntent().getByteArrayExtra("image");
         image = BitmapFactory.decodeByteArray(arr, 0, arr.length);
         ImageView imageView2 = (ImageView)findViewById(R.id.imageView2);
-        imageView2.setImageBitmap(image);
+        rounded_image = getRoundedBitmap(image);
+        imageView2.setImageBitmap(rotateImage(rounded_image, 90));
 
         btn1 = (ImageButton) findViewById(R.id.after_btn1);
         btn2 = (ImageButton) findViewById(R.id.after_btn2);
@@ -99,6 +105,41 @@ public class AfterActivity extends Activity {
         });
 
     }
+    private static Bitmap getRoundedBitmap(Bitmap bitmap) {
+        final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(output);
+
+        final int color = Color.GRAY;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, 85, 85, paint);
+        //canvas.drawOval(rectF, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        bitmap.recycle();
+
+        return output;
+    }
+    private Bitmap rotateImage(Bitmap src, float degree) {
+
+        // Matrix 객체 생성
+        Matrix matrix = new Matrix();
+        // 회전 각도 셋팅
+        matrix.setScale(1, -1);  // 상하반전
+        matrix.setScale(-1, 1);  // 좌우반전
+
+        matrix.postRotate(degree);
+        // 이미지와 Matrix 를 셋팅해서 Bitmap 객체 생성
+        return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
+    }
+
     private void saveScreen(Bitmap image) {
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());

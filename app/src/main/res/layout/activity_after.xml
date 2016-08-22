@@ -9,25 +9,25 @@
     <Space
         android:layout_width="1px"
         android:layout_height="0px"
-        android:layout_weight="0.1617"/>
+        android:layout_weight="0.162"/>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.5487"
+        android:layout_weight="0.549"
         android:weightSum="1">
 
         <Space
             android:layout_width="0px"
             android:layout_height="1px"
-            android:layout_weight="0.1173"/>
+            android:layout_weight="0.117"/>
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/imageView2"
-            android:layout_weight="0.7654"
+            android:layout_weight="0.7668"
             android:layout_gravity="center"
             android:bottomRightRadius="45dp"
             android:bottomLeftRadius="45dp"
@@ -38,7 +38,7 @@
         <Space
             android:layout_width="0px"
             android:layout_height="1px"
-            android:layout_weight="0.1173"/>
+            android:layout_weight="0.117"/>
 
     </LinearLayout>
 

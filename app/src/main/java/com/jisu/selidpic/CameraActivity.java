@@ -11,16 +11,15 @@ import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
@@ -35,12 +34,6 @@ import android.widget.ImageView;
 import android.graphics.drawable.Drawable;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -52,8 +45,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     SurfaceHolder holder;
     VideoView videoView;
     LinearLayout linearLayout;
-
-    Bitmap Picturetmp;
+    ByteArrayOutputStream outstr;
     ToggleButton toggleButton;
 
     ImageButton button3, button4, camera_switch;
@@ -82,7 +74,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     int frameWidth = 720;
     int frameSize = frameHeight * frameWidth;
     int rgb[];
-    byte myData[] = new byte[frameSize];
+    byte myData[] = new byte[10000000];
 
     private SensorManager sensorManager;
     private Sensor sensor;
@@ -196,24 +188,13 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         camera_switch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bitmap bm;
 
-                camera.takePicture(shutterCallback, rawCallback, mPicutureListener);
-
-                //화면캡쳐부분
-                videoView.getRootView();
-                videoView.setDrawingCacheEnabled(true);
-                bm = videoView.getDrawingCache();
-
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream() ;
-                    bm.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                    byte[] byteArray = stream.toByteArray();
+                byte[] byteArray = outstr.toByteArray();
 
                 Intent intent = new Intent(CameraActivity.this, AfterActivity.class);
                 intent.putExtra("image",byteArray);
                 startActivity(intent);
                 finish();
-
             }
         });
 
@@ -298,6 +279,10 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         Camera.Size optimalSize = getOptimalPreviewSize(pictureSizes, screenWidth, camHeight);
         Log.d("MyTag", "Optimal Preview Size : "+optimalSize.width+" "+optimalSize.height);
         params.setPreviewSize(optimalSize.width, optimalSize.height);
+        /*
+        frameHeight = optimalSize.height;
+        frameWidth = optimalSize.width;
+        frameSize = frameHeight * frameWidth;*/
 
         //params.setPreviewSize(screenWidth, camHeight);
         //params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO); //video 화면이 변할 때마다 자동 포커스 맞춤
@@ -497,9 +482,18 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
-        for (int i = 0; i < frameSize; i++) {
+        for(int i = 0; i < data.length; i++){
             myData[i] = data[i];
         }
+        Camera.Parameters parameters = camera.getParameters();
+        int width = parameters.getPreviewSize().width;
+        int height = parameters.getPreviewSize().height;
+        outstr = new ByteArrayOutputStream();
+        Rect rect = new Rect(0, 0, width, height);
+        YuvImage yuvimage=new YuvImage(data,ImageFormat.NV21,width,height,null);
+        yuvimage.compressToJpeg(rect, 50, outstr);
+        Bitmap bmp = BitmapFactory.decodeByteArray(outstr.toByteArray(), 0, outstr.size());
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, outstr);
 
         //textView.setText("Data: "+data.toString());
         //textView.setHighlightColor(Color.WHITE);
