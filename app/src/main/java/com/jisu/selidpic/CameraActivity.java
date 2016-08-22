@@ -226,7 +226,6 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         });
     }
 
-
     //****************************************************************************************************************************** Video view resume, pause
 
     @Override

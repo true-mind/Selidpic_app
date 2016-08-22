@@ -28,6 +28,7 @@
         <activity android:name=".MainActivity"/>
         <activity android:name=".UserDefineActivity"/>
         <activity android:name=".CautionActivity"/>
+        <activity android:name=".BetweenActivity"/>
     </application>
 
 </manifest>
