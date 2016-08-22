@@ -35,10 +35,15 @@ public class AfterActivity extends Activity {
     ImageView imageView2;
     Bitmap image, rounded_image;
     String filename;
+    int width, height, statview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_after);
+
+        width = getIntent().getIntExtra("width", 0);
+        height = getIntent().getIntExtra("height", 0);
+        statview = getIntent().getIntExtra("statview", 5);
 
         byte[] arr = getIntent().getByteArrayExtra("image");
         image = BitmapFactory.decodeByteArray(arr, 0, arr.length);
@@ -73,6 +78,14 @@ public class AfterActivity extends Activity {
         btn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(AfterActivity.this, CameraActivity.class);
+
+                intent.putExtra("width", width);
+                intent.putExtra("height", height);
+                intent.putExtra("view", statview);
+
+                startActivity(intent);
+                finish();
                 Toast.makeText(AfterActivity.this, "Replay", Toast.LENGTH_SHORT).show();
 
             }

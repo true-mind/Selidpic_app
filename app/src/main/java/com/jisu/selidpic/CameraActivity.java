@@ -52,7 +52,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
     TextView textView;
 
-    ImageView imgStatus;
+    ImageView imgStatus, camera_helper;
 
     Drawable camStatDefault;
     Drawable camStat1;
@@ -99,6 +99,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         initSensor();
         setCamera();
         camera_switch.setImageDrawable(camera_user);
+
         timer = new Timer(false);
         handler = new Handler();
         timer.schedule(new TimerTask() {
@@ -215,7 +216,16 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                 }
             }
         });
+        camera_helper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                camera_helper.setVisibility(View.GONE);
+
+            }
+        });
     }
+
 
     //****************************************************************************************************************************** Video view resume, pause
 
@@ -363,6 +373,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         button3 = (ImageButton) findViewById(R.id.camera_btn_back);
         button4 = (ImageButton) findViewById(R.id.camera_btn_gal);
         camera_switch = (ImageButton) findViewById(R.id.camera_switch);
+        camera_helper = (ImageView) findViewById(R.id.camera_helper);
         toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
         linearLayout = (LinearLayout) findViewById(R.id.camera_linearlayout_videoview);
 
@@ -640,10 +651,14 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     //****************************************************************************************************************************** Softkey - back
     @Override
     public void onBackPressed() {
-        Intent Intent2 = new Intent(CameraActivity.this, CautionActivity.class);
-        startActivity(Intent2);
+        Intent intent2 = new Intent(CameraActivity.this, CautionActivity.class);
+        intent2.putExtra("width", width);
+        intent2.putExtra("height", height);
+        intent2.putExtra("view", statview);
+        startActivity(intent2);
         finish();
     }
 }
+
 
 
