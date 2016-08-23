@@ -29,8 +29,8 @@ public class UserDefineActivity extends Activity {
             public void onClick(View v) {
                 String inPutText = edittext.getText().toString();
                 String inPutText2 = edittext2.getText().toString();
-                width = Integer.parseInt(inPutText);
-                height = Integer.parseInt(inPutText2);
+                height = Integer.parseInt(inPutText);
+                width = Integer.parseInt(inPutText2);
                 Intent intent5 = new Intent(UserDefineActivity.this, CautionActivity.class);
                 intent5.putExtra("width", width);
                 intent5.putExtra("height", height);

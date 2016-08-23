@@ -13,15 +13,13 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/cache.properties.lock" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/cache.properties.lock" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/fileHashes.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/fileSnapshots.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/fileSnapshots.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/outputFileStates.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/outputFileStates.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/taskArtifacts.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/taskArtifacts.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.lock" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.lock" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.lock" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/camera_helper.png" afterPath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/camera_helper.png" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/AfterActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/AfterActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/CameraActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/CameraActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/MainActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/UserDefineActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/UserDefineActivity.java" />
     </list>
     <ignored path="Selidpic_app.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -42,11 +40,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="CameraActivity.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="CameraActivity.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/CameraActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="4.4661245">
-              <caret line="510" column="63" selection-start-line="510" selection-start-column="63" selection-end-line="510" selection-end-column="63" />
+            <state vertical-scroll-proportion="-6.0625">
+              <caret line="633" column="24" selection-start-line="633" selection-start-column="24" selection-end-line="633" selection-end-column="24" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#3157#3941#0" expanded="true" />
@@ -68,10 +66,9 @@
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="90" column="25" selection-start-line="90" selection-start-column="25" selection-end-line="90" selection-end-column="25" />
+              <caret line="38" column="13" selection-start-line="38" selection-start-column="13" selection-end-line="38" selection-end-column="13" />
               <folding>
                 <element signature="e#677#1089#0" expanded="true" />
-                <element signature="e#1088#1089#0" expanded="true" />
                 <element signature="e#2820#3035#0" expanded="true" />
                 <element signature="e#3034#3035#0" expanded="true" />
               </folding>
@@ -79,11 +76,21 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="UserDefineActivity.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/UserDefineActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.8129676">
+              <caret line="38" column="0" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="AfterActivity.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/AfterActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-8.53125">
-              <caret line="74" column="0" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
+            <state vertical-scroll-proportion="-7.75">
+              <caret line="55" column="44" selection-start-line="55" selection-start-column="44" selection-end-line="55" selection-end-column="44" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#4166#4505#0" expanded="true" />
@@ -146,7 +153,7 @@
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/CautionActivity.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="24" column="45" selection-start-line="24" selection-start-column="45" selection-end-line="24" selection-end-column="45" />
+              <caret line="35" column="54" selection-start-line="35" selection-start-column="54" selection-end-line="35" selection-end-column="54" />
               <folding />
             </state>
           </provider>
@@ -1771,8 +1778,6 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_splash.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_user_define.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/MainActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/UserDefineActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/SplashActivity.java" />
         <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/res/drawable/camera_toggle.xml" />
@@ -1785,9 +1790,11 @@
         <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_between.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/BetweenActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/CautionActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/AfterActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/CameraActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/AfterActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/CautionActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/UserDefineActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/MainActivity.java" />
       </list>
     </option>
   </component>
@@ -2208,7 +2215,7 @@
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.35986158" sideWeight="0.5069444" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5040369" sideWeight="0.49305555" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Monitor" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5040369" sideWeight="0.49305555" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32871974" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298731" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -2572,13 +2579,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/UserDefineActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="13" column="32" selection-start-line="13" selection-start-column="32" selection-end-line="13" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -2643,14 +2643,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/CautionActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="24" column="45" selection-start-line="24" selection-start-column="45" selection-end-line="24" selection-end-column="45" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_after.xml">
       <provider selected="true" editor-type-id="android-designer">
         <state />
@@ -2681,19 +2673,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="90" column="25" selection-start-line="90" selection-start-column="25" selection-end-line="90" selection-end-column="25" />
-          <folding>
-            <element signature="e#677#1089#0" expanded="true" />
-            <element signature="e#1088#1089#0" expanded="true" />
-            <element signature="e#2820#3035#0" expanded="true" />
-            <element signature="e#3034#3035#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../sdk/sources/android-23/android/os/Handler.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -2710,10 +2689,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/CameraActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-6.0625">
+          <caret line="633" column="24" selection-start-line="633" selection-start-column="24" selection-end-line="633" selection-end-column="24" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3157#3941#0" expanded="true" />
+            <element signature="e#3258#3915#0" expanded="true" />
+            <element signature="e#3914#3915#0" expanded="true" />
+            <element signature="e#3940#3941#0" expanded="true" />
+            <element signature="e#6639#7240#0" expanded="true" />
+            <element signature="e#7239#7240#0" expanded="true" />
+            <element signature="e#7285#7747#0" expanded="true" />
+            <element signature="e#7746#7747#0" expanded="true" />
+            <element signature="e#14946#15289#0" expanded="true" />
+            <element signature="e#15288#15289#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/AfterActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-8.53125">
-          <caret line="74" column="0" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
+        <state vertical-scroll-proportion="-7.75">
+          <caret line="55" column="44" selection-start-line="55" selection-start-column="44" selection-end-line="55" selection-end-column="44" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#4166#4505#0" expanded="true" />
@@ -2728,23 +2727,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/CameraActivity.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/CautionActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="4.4661245">
-          <caret line="510" column="63" selection-start-line="510" selection-start-column="63" selection-end-line="510" selection-end-column="63" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="35" column="54" selection-start-line="35" selection-start-column="54" selection-end-line="35" selection-end-column="54" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="38" column="13" selection-start-line="38" selection-start-column="13" selection-end-line="38" selection-end-column="13" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#3157#3941#0" expanded="true" />
-            <element signature="e#3258#3915#0" expanded="true" />
-            <element signature="e#3914#3915#0" expanded="true" />
-            <element signature="e#3940#3941#0" expanded="true" />
-            <element signature="e#6639#7240#0" expanded="true" />
-            <element signature="e#7239#7240#0" expanded="true" />
-            <element signature="e#7285#7747#0" expanded="true" />
-            <element signature="e#7746#7747#0" expanded="true" />
-            <element signature="e#14946#15289#0" expanded="true" />
-            <element signature="e#15288#15289#0" expanded="true" />
+            <element signature="e#677#1089#0" expanded="true" />
+            <element signature="e#2820#3035#0" expanded="true" />
+            <element signature="e#3034#3035#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jisu/selidpic/UserDefineActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.8129676">
+          <caret line="38" column="0" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>

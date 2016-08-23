@@ -52,8 +52,8 @@ public class AfterActivity extends Activity {
         screenWidth = image.getWidth();
         screenHeight = image.getHeight();
 
-        height = getIntent().getIntExtra("width", 0);
-        width = getIntent().getIntExtra("height", 0);
+        width = getIntent().getIntExtra("width", 0);
+        height = getIntent().getIntExtra("height", 0);
         statview = getIntent().getIntExtra("statview", 5);
         //screenWidth = getIntent().getIntExtra("screenWidth", 0);
         //screenHeight = getIntent().getIntExtra("screenHeight", 0);

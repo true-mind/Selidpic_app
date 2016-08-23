@@ -31,8 +31,8 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
 
                 Intent intent1 = new Intent(MainActivity.this, CautionActivity.class);
-                intent1.putExtra("width", 25);
-                intent1.putExtra("height", 30);
+                intent1.putExtra("width", 30);
+                intent1.putExtra("height", 25);
                 intent1.putExtra("view", 1);
                 startActivity(intent1);
                 finish();
@@ -46,8 +46,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent2 = new Intent(MainActivity.this, CautionActivity.class);
-                intent2.putExtra("width", 30);
-                intent2.putExtra("height", 40);
+                intent2.putExtra("width", 40);
+                intent2.putExtra("height", 30);
                 intent2.putExtra("view", 2);
                 startActivity(intent2);
                 finish();
@@ -59,8 +59,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent3 = new Intent(MainActivity.this, CautionActivity.class);
-                intent3.putExtra("width", 35);
-                intent3.putExtra("height", 45);
+                intent3.putExtra("width", 45);
+                intent3.putExtra("height", 35);
                 intent3.putExtra("view", 3);
                 startActivity(intent3);
                 finish();
@@ -72,8 +72,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent4 = new Intent(MainActivity.this, CautionActivity.class);
-                intent4.putExtra("width", 50);
-                intent4.putExtra("height", 70);
+                intent4.putExtra("width", 70);
+                intent4.putExtra("height", 50);
                 intent4.putExtra("view", 4);
                 startActivity(intent4);
                 finish();
