@@ -47,7 +47,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     LinearLayout linearLayout;
     ByteArrayOutputStream outstr;
     ToggleButton toggleButton;
-
+    Bitmap bmp;
     ImageButton button3, button4, camera_switch;
 
     TextView textView;
@@ -191,9 +191,12 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
             public void onClick(View v) {
 
                 byte[] byteArray = outstr.toByteArray();
-
                 Intent intent = new Intent(CameraActivity.this, AfterActivity.class);
                 intent.putExtra("image",byteArray);
+                intent.putExtra("width", width);
+                intent.putExtra("height", height);
+                intent.putExtra("screenWidth", screenWidth);
+                intent.putExtra("screenHeight", screenHeight);
                 startActivity(intent);
                 finish();
             }
@@ -365,7 +368,8 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
         videoView = (VideoView) findViewById(R.id.videoView);
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(screenWidth, camHeight);
+        //LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(screenWidth, camHeight);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(screenWidth, screenHeight);
 
         videoView.setLayoutParams(layoutParams);
 
@@ -378,7 +382,8 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
         //************************camMargin설정 (위, 아래)
 
-        layoutParams.setMargins(0, camMargin, 0, camMargin);
+        //layoutParams.setMargins(0, camMargin, 0, camMargin);
+
         layoutParams.gravity = Gravity.CENTER;
 
         videoView.setOnPreparedListener(onPrepared);
@@ -503,7 +508,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         YuvImage yuvimage=new YuvImage(data,ImageFormat.NV21,width,height,null);
         yuvimage.compressToJpeg(rect, 50, outstr);
         Bitmap bmp = BitmapFactory.decodeByteArray(outstr.toByteArray(), 0, outstr.size());
-        bmp.compress(Bitmap.CompressFormat.JPEG, 100, outstr);
+        bmp.compress(Bitmap.CompressFormat.JPEG, 50, outstr);  
 
         //textView.setText("Data: "+data.toString());
         //textView.setHighlightColor(Color.WHITE);

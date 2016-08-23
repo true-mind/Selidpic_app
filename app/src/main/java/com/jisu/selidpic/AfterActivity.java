@@ -12,6 +12,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -33,22 +35,83 @@ public class AfterActivity extends Activity {
 
     ImageButton btn1, btn2, btn3, btn4;
     ImageView imageView2;
-    Bitmap image, rounded_image;
+    Bitmap image, rounded_image, imageCropped;
     String filename;
     int width, height, statview;
+    int screenWidth, screenHeight, widthMid, heightMid, picWidth, picHeight;
+    int cropStartX, cropStartY;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_after);
 
-        width = getIntent().getIntExtra("width", 0);
-        height = getIntent().getIntExtra("height", 0);
-        statview = getIntent().getIntExtra("statview", 5);
-
         byte[] arr = getIntent().getByteArrayExtra("image");
         image = BitmapFactory.decodeByteArray(arr, 0, arr.length);
+
+        screenWidth = image.getWidth();
+        screenHeight = image.getHeight();
+
+        height = getIntent().getIntExtra("width", 0);
+        width = getIntent().getIntExtra("height", 0);
+        statview = getIntent().getIntExtra("statview", 5);
+        //screenWidth = getIntent().getIntExtra("screenWidth", 0);
+        //screenHeight = getIntent().getIntExtra("screenHeight", 0);
+
+        widthMid = screenWidth/2;
+        heightMid = screenHeight/2;
+
+        picHeight = (screenWidth/width*height);
+        picWidth = (screenHeight/height*width);
+
+        Log.d("MyTag", "width:"+width);
+        Log.d("MyTag", "height:"+height);
+        Log.d("MyTag", "picWidth:"+picWidth);
+        Log.d("MyTag", "picHeight:"+picHeight);
+        Log.d("MyTag", "screenWidth:"+screenWidth);
+        Log.d("MyTag", "screenHeight:"+screenHeight);
+        Log.d("MyTag", "widthMid:"+widthMid);
+        Log.d("MyTag", "heightMid:"+heightMid);
+
+
+        if(picHeight>screenHeight){
+            picHeight = screenHeight;
+            picWidth = (picHeight/height*width);
+            cropStartX = widthMid - (picWidth/2);
+            cropStartY = heightMid - (picHeight/2);
+
+
+            Log.d("MyTag", "cropStartX:"+cropStartX);
+            Log.d("MyTag", "cropStartY:"+cropStartY);
+            Log.d("MyTag", "widthMid:"+widthMid);
+            Log.d("MyTag", "heightMid:"+heightMid);
+            Log.d("MyTag", "picWidth:"+picWidth);
+            Log.d("MyTag", "picHeight:"+picHeight);
+
+            imageCropped = Bitmap.createBitmap(image, cropStartX, cropStartY, picWidth, picHeight);
+        }
+        else{
+
+            picWidth = screenWidth;
+            picHeight = (picWidth/width*height);
+            cropStartX = widthMid - (picWidth/2);
+            cropStartY = heightMid - (picHeight/2);
+
+
+            Log.d("MyTag", "cropStartX:"+cropStartX);
+            Log.d("MyTag", "cropStartY:"+cropStartY);
+            Log.d("MyTag", "widthMid:"+widthMid);
+            Log.d("MyTag", "heightMid:"+heightMid);
+            Log.d("MyTag", "picWidth:"+picWidth);
+            Log.d("MyTag", "picHeight:"+picHeight);
+
+            imageCropped = Bitmap.createBitmap(image, cropStartX, cropStartY, picWidth, picHeight);
+
+        }
+
+
         ImageView imageView2 = (ImageView)findViewById(R.id.imageView2);
-        rounded_image = getRoundedBitmap(image);
+        rounded_image = getRoundedBitmap(imageCropped);
         imageView2.setImageBitmap(rotateImage(rounded_image, 90));
 
         btn1 = (ImageButton) findViewById(R.id.after_btn1);
@@ -96,6 +159,8 @@ public class AfterActivity extends Activity {
             public void onClick(View v) {
 
                 saveScreen(image);
+
+
 /*
                 TimerTask taskCheck = new TimerTask() {
                     @Override
@@ -118,6 +183,8 @@ public class AfterActivity extends Activity {
         });
 
     }
+
+
     private static Bitmap getRoundedBitmap(Bitmap bitmap) {
         final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(output);
@@ -135,8 +202,6 @@ public class AfterActivity extends Activity {
 
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(bitmap, rect, rect, paint);
-
-        bitmap.recycle();
 
         return output;
     }
@@ -166,7 +231,7 @@ public class AfterActivity extends Activity {
 
             filename = "SelidPic_"+ timeStamp + ".jpeg";
             FileOutputStream out = new FileOutputStream("/sdcard/SelidPic/"+ filename);
-            image.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            image.compress(Bitmap.CompressFormat.JPEG, 50, out);
             out.close();
         } catch (FileNotFoundException e) {
             Log.d("FileNotFoundException:", e.getMessage());
