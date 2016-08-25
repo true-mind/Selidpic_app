@@ -63,7 +63,7 @@ public class AfterActivity extends Activity {
 
         picHeight = (screenWidth/width*height);
         picWidth = (screenHeight/height*width);
-
+/*
         Log.d("MyTag", "width:"+width);
         Log.d("MyTag", "height:"+height);
         Log.d("MyTag", "picWidth:"+picWidth);
@@ -72,7 +72,7 @@ public class AfterActivity extends Activity {
         Log.d("MyTag", "screenHeight:"+screenHeight);
         Log.d("MyTag", "widthMid:"+widthMid);
         Log.d("MyTag", "heightMid:"+heightMid);
-
+*/
 
         if(picHeight>screenHeight){
             picHeight = screenHeight;
@@ -96,14 +96,6 @@ public class AfterActivity extends Activity {
             picHeight = (picWidth/width*height);
             cropStartX = widthMid - (picWidth/2);
             cropStartY = heightMid - (picHeight/2);
-
-
-            Log.d("MyTag", "cropStartX:"+cropStartX);
-            Log.d("MyTag", "cropStartY:"+cropStartY);
-            Log.d("MyTag", "widthMid:"+widthMid);
-            Log.d("MyTag", "heightMid:"+heightMid);
-            Log.d("MyTag", "picWidth:"+picWidth);
-            Log.d("MyTag", "picHeight:"+picHeight);
 
             imageCropped = Bitmap.createBitmap(image, cropStartX, cropStartY, picWidth, picHeight);
 

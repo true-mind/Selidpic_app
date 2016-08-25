@@ -109,10 +109,10 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                     @Override
                     public void run() {
                         if (sensorValue < 50) {
-                            Toast.makeText(CameraActivity.this, "아,ㅇ,어두워....", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CameraActivity.this, "사용자의 조명이 너무 어두움", Toast.LENGTH_SHORT).show();
                             brightness_ok = false;
                         } else if (sensorValue > 320) {
-                            Toast.makeText(CameraActivity.this, "ㅇ,아...눈부셔....", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CameraActivity.this, "사용자의 조명이 너무 밝음", Toast.LENGTH_SHORT).show();
                             brightness_ok = false;
                         } else {
                             brightness_ok = true;

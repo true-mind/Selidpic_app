@@ -77,7 +77,37 @@
     <Space
         android:layout_width="1px"
         android:layout_height="0px"
-        android:layout_weight="0.478"/>
+        android:layout_weight="0.06"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.03"
+        android:weightSum="1">
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.118"/>
+
+        <ImageView
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:id="@+id/alertView"
+            android:layout_weight="0.764"
+            android:background="@null"/>
+
+        <Space
+            android:layout_width="0px"
+            android:layout_height="1px"
+            android:layout_weight="0.118"/>
+    </LinearLayout>
+
+    <Space
+        android:layout_width="1px"
+        android:layout_height="0px"
+        android:layout_weight="0.388"/>
 
     <LinearLayout
         android:orientation="horizontal"
