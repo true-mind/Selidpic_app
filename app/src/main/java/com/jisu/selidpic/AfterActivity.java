@@ -35,11 +35,12 @@ public class AfterActivity extends Activity {
 
     ImageButton btn1, btn2, btn3, btn4;
     ImageView imageView2;
-    Bitmap image, rounded_image, imageCropped;
+    Bitmap image, rounded_image, imageCropped, composed_image, edge_image, temp_image;
     String filename;
     int width, height, statview;
     int screenWidth, screenHeight, widthMid, heightMid, picWidth, picHeight;
     int cropStartX, cropStartY;
+    int colors[], average_color;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,14 +103,35 @@ public class AfterActivity extends Activity {
         }
 
 
-        ImageView imageView2 = (ImageView)findViewById(R.id.imageView2);
-        rounded_image = getRoundedBitmap(imageCropped);
-        imageView2.setImageBitmap(rotateImage(rounded_image, 90));
+        imageView2 = (ImageView)findViewById(R.id.imageView2);
+
+        //Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.photo_background);
+        //temp_image = getRoundedBitmap(image);
+        //image = rotateImage(temp_image, 90);
+        image = rotateImage(image, 90);
+        imageView2.setImageBitmap(image);
+
+        edge_image = getEdge(image);
+        //composed_image = getComposedImage(edge_image, image);
+        //imageView2.setImageBitmap(edge_image);
+
+        //imageView2.setImageBitmap(composed_image);
+        colors = new int[3];
+        colors = createBackColors(image);
 
         btn1 = (ImageButton) findViewById(R.id.after_btn1);
         btn2 = (ImageButton) findViewById(R.id.after_btn2);
         btn3 = (ImageButton) findViewById(R.id.after_btn3);
         btn4 = (ImageButton) findViewById(R.id.after_btn4);
+
+        //temp color picker
+/*        ImageView view1, view2, view3;
+        view1 = (ImageView) findViewById(R.id.tempcolorview1);
+        view2 = (ImageView) findViewById(R.id.tempcolorview2);
+        view3 = (ImageView) findViewById(R.id.tempcolorview3);
+        view1.setBackgroundColor(colors[0]);
+        view2.setBackgroundColor(colors[1]);
+        view3.setBackgroundColor(colors[2]);*/
 
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,8 +173,6 @@ public class AfterActivity extends Activity {
             public void onClick(View v) {
 
                 saveScreen(image);
-
-
 /*
                 TimerTask taskCheck = new TimerTask() {
                     @Override
@@ -176,6 +196,194 @@ public class AfterActivity extends Activity {
 
     }
 
+/*
+    private Bitmap getComposedImage(Bitmap edge_image, Bitmap image) {
+        Bitmap final_image;
+        for(int i = 0; i < compose_pixel_length; i++){
+            image.setPixel(compose_pixel[i][0], compose_pixel[i][1], Color.CYAN);
+        }
+        final_image = image;
+        return final_image;
+    }*/
+
+    private int[] createBackColors(Bitmap bitmap){
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+
+        colors = new int[3];
+        colors[0] = bitmap.getPixel((width/4), (height/10));
+        colors[1] = bitmap.getPixel((width/2), (height/15));
+        colors[2] = bitmap.getPixel((width*3/4), (height/10));
+        average_color=(colors[0]+colors[1]+colors[2])/3;
+
+        return colors;
+    }
+
+    private Bitmap getEdge(Bitmap bitmap){ // Sobel 윤곽선 검출 알고리즘 사용
+        double  Gx[][], Gy[][], G[][];
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        int[] pixels = new int[width * height];
+        int[][] output = new int[width][height];
+        int i, j, counter, k=0;
+
+        int edge_y[] = new int[width];
+        int temp_point_right[][] = new int[100][2];
+        int temp_point_left[][] = new int[100][2];
+        int temp_point_left_length = 0;
+        int temp_point_right_length = 0;
+
+        for(i=0;i<width;i++){
+            for(j=0;j<height;j++){
+                pixels[k]=bitmap.getPixel(i, j);
+                output[i][j] = pixels[k];
+                k++;
+            }
+        }
+        Gx = new double[width][height];
+        Gy = new double[width][height];
+        G  = new double[width][height];
+
+        for (i=0; i<width; i++) {
+            for (j=0; j<height; j++) {
+                if (i==0 || i==width-1 || j==0 || j==height-1)
+                    Gx[i][j] = Gy[i][j] = G[i][j] = 0; // Image boundary cleared
+                else{
+                    Gx[i][j] = output[i+1][j-1] + 2*output[i+1][j] + output[i+1][j+1] -
+                            output[i-1][j-1] - 2*output[i-1][j] - output[i-1][j+1];
+                    Gy[i][j] = output[i-1][j+1] + 2*output[i][j+1] + output[i+1][j+1] -
+                            output[i-1][j-1] - 2*output[i][j-1] - output[i+1][j-1];
+                    G[i][j]  = Math.abs(Gx[i][j]) + Math.abs(Gy[i][j]);
+                }
+            }
+        }
+
+        counter = 0;
+        for(int ii = 0 ; ii < width ; ii++ )
+        {
+            for(int jj = 0 ; jj < height ; jj++ )
+            {
+                pixels[counter] = (int) G[ii][jj];
+                counter = counter + 1;
+            }
+        }
+        counter=0;
+        for(i=0;i<width;i++){
+            for(j=0;j<height;j++){
+                if(pixels[counter]>3000000){
+                    //bitmap.setPixel(i, j, Color.BLACK);
+                }else{
+                    //bitmap.setPixel(i, j, Color.WHITE);
+                }
+                counter++;
+            }
+        }
+
+        counter=0;
+        boolean founded_edge=false;
+
+        for(i=0;i<width;i++){
+            for(j=0;j<height;j++){
+                if(pixels[counter]>3000000){
+                    if(founded_edge==false){
+                        edge_y[i] = j;
+                        Log.d("MyTag", "found edge : ("+i+","+j+")");
+                        founded_edge = true;
+                    }
+                }
+                if(founded_edge==false){
+                    bitmap.setPixel(i, j, Color.CYAN);
+                    /*
+                    compose_pixel[compose_pixel_length][0] = i;
+                    compose_pixel[compose_pixel_length][1] = j;
+                    compose_pixel_length++;*/
+                }
+                counter++;
+            }
+            if(founded_edge==false){
+                Log.d("MyTag", "can't found edge");
+                edge_y[i] = 0;
+            }else{
+                founded_edge=false;
+            }
+        }
+
+        j=0;
+        for(i=width/2;i<width-1;i++){
+            if(edge_y[i]-edge_y[i-1] > (height/4)){
+                temp_point_right[j][0] = edge_y[i-1];
+                temp_point_right[j][1] = edge_y[i];
+                j++;
+                temp_point_right_length++;
+                for(int q=0;q<height;q++){
+                    //bitmap.setPixel(i, q, Color.BLUE);
+                }
+            }
+        }
+
+        j=0;
+        for(i=1;i<width/2;i++){
+            if(edge_y[i-1]-edge_y[i] > (height/4)){
+                temp_point_left[j][0] = edge_y[i-1];
+                temp_point_left[j][1] = edge_y[i];
+                j++;
+                temp_point_left_length++;
+                for(int q=0;q<height;q++){
+                    //bitmap.setPixel(i, q, Color.GREEN);
+                }
+            }
+        }
+
+        founded_edge=false;
+        for(int q=0;q<temp_point_left_length;q++) {
+            Log.d("MyTag", "temp_point_left["+q+"][0]="+temp_point_left[q][0]+", temp_point_left["+q+"][0]="+temp_point_left[q][1]);
+            for (i = temp_point_left[q][0]; i > temp_point_left[q][1]; i--) {
+                counter = i;
+                for (j = 0; j < width / 2; j++) {
+                    counter += height;
+                    if (pixels[counter] > 3000000) {
+                        if (founded_edge == false) {
+                            founded_edge = true;
+                        }
+                    }
+                    if (founded_edge == false) {
+                        bitmap.setPixel(j, i,  Color.CYAN);
+                        /*compose_pixel[compose_pixel_length][0] = j;
+                        compose_pixel[compose_pixel_length][1] = i;
+                        compose_pixel_length++;*/
+                    }
+                }
+                founded_edge = false;
+            }
+        }
+
+        founded_edge=false;
+        for(int q=0;q<temp_point_right_length;q++){
+            Log.d("MyTag", "temp_point_right["+q+"][0]="+temp_point_right[q][0]+", temp_point_right["+q+"][0]="+temp_point_right[q][1]);
+            for(i = temp_point_right[q][0]; i < temp_point_right[q][1]; i++){
+                counter = (height
+                        * (width-1)) + i;
+                for(j=width-1; j>width/2; j--){
+                    counter -= height;
+                    if(pixels[counter] > 3000000) {
+                        if(founded_edge == false){
+                            founded_edge = true;
+                        }
+                    }
+                    if(founded_edge == false){
+                        bitmap.setPixel(j, i, Color.CYAN);
+                        /*compose_pixel[compose_pixel_length][0] = j;
+                        compose_pixel[compose_pixel_length][1] = i;
+                        compose_pixel_length++;
+                    */}
+                }
+                founded_edge=false;
+            }
+        }
+
+        return bitmap;
+    }
+
 
     private static Bitmap getRoundedBitmap(Bitmap bitmap) {
         final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
@@ -194,6 +402,8 @@ public class AfterActivity extends Activity {
 
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        bitmap.recycle();
 
         return output;
     }

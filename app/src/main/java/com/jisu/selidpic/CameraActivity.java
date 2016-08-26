@@ -20,6 +20,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
@@ -34,6 +35,7 @@ import android.widget.ImageView;
 import android.graphics.drawable.Drawable;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -197,6 +199,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                 intent.putExtra("height", height);
                 intent.putExtra("screenWidth", screenWidth);
                 intent.putExtra("screenHeight", screenHeight);
+                intent.putExtra("statview", statview);
                 startActivity(intent);
                 finish();
             }
@@ -215,6 +218,28 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                 else{
                     camera_switch.setClickable(false);
                     camera_switch.setImageDrawable(camera_auto);
+
+                    TimerTask taskCheck = new TimerTask() {
+                        @Override
+
+                        public void run() {
+
+                            byte[] byteArray = outstr.toByteArray();
+                            Intent intent = new Intent(CameraActivity.this, AfterActivity.class);
+                            intent.putExtra("image",byteArray);
+                            intent.putExtra("width", width);
+                            intent.putExtra("height", height);
+                            intent.putExtra("screenWidth", screenWidth);
+                            intent.putExtra("screenHeight", screenHeight);
+                            intent.putExtra("statview", statview);
+                            startActivity(intent);
+                            finish();
+
+                            }
+                    };
+
+                    Timer timer = new Timer();
+                    timer.schedule(taskCheck, 5000);
 
                 }
             }
