@@ -14,6 +14,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -108,16 +109,16 @@ public class AfterActivity extends Activity {
         //Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.photo_background);
         //temp_image = getRoundedBitmap(image);
         //image = rotateImage(temp_image, 90);
-        image = rotateImage(image, 90);
-        imageView2.setImageBitmap(image);
+        imageCropped = rotateImage(imageCropped, 90);
 
-        edge_image = getEdge(image);
+        edge_image = getEdge(imageCropped);
+        imageView2.setImageBitmap(edge_image);
         //composed_image = getComposedImage(edge_image, image);
         //imageView2.setImageBitmap(edge_image);
 
         //imageView2.setImageBitmap(composed_image);
         colors = new int[3];
-        colors = createBackColors(image);
+        colors = createBackColors(imageCropped);
 
         btn1 = (ImageButton) findViewById(R.id.after_btn1);
         btn2 = (ImageButton) findViewById(R.id.after_btn2);
@@ -136,11 +137,25 @@ public class AfterActivity extends Activity {
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(AfterActivity.this, "Share", Toast.LENGTH_SHORT).show();
-                Intent intent = getPackageManager().getLaunchIntentForPackage("packageName");
-                startActivity(intent);
 
+                Intent it3=getIntent(); //파일명을 가져오기 위한 인텐트(에디트텍스트에서 이름입력받은 걸 파일명으로 쓰기 위해)
+                String str_name=filename; //이름을 가져온다.
+                File fileRoute = null;
+                fileRoute = Environment.getExternalStorageDirectory(); //sdcard 파일경로 선언
 
+                File files = new File(fileRoute,"/SelidPic/"+str_name); //temp폴더에 이름으로 저장된 jpeg파일 경로 선언
+
+                if(files.exists()==true)  //파일유무확인
+                {
+                    Intent intentSend  = new Intent(Intent.ACTION_SEND);
+                    intentSend.setType("image/*");
+                //이름으로 저장된 파일의 경로를 넣어서 공유하기
+                    intentSend.putExtra(Intent.EXTRA_STREAM, Uri.parse(fileRoute+"/SelidPic/"+str_name));
+                    startActivity(Intent.createChooser(intentSend, "공유")); //공유하기 창 띄우기
+                }else{
+                //파일이 없다면 저장을 해달라는 토스트메세지를 띄운다.
+                    Toast.makeText(getApplicationContext(), "저장을 먼저 해주세요", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -172,7 +187,7 @@ public class AfterActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                saveScreen(image);
+                saveScreen(imageCropped);
 /*
                 TimerTask taskCheck = new TimerTask() {
                     @Override
@@ -220,7 +235,7 @@ public class AfterActivity extends Activity {
     }
 
     private Bitmap getEdge(Bitmap bitmap){ // Sobel 윤곽선 검출 알고리즘 사용
-        double  Gx[][], Gy[][], G[][];
+        int  Gx[][], Gy[][];//, G[][];
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
         int[] pixels = new int[width * height];
@@ -240,25 +255,31 @@ public class AfterActivity extends Activity {
                 k++;
             }
         }
-        Gx = new double[width][height];
-        Gy = new double[width][height];
-        G  = new double[width][height];
+        Gx = new int[width][height];
+        Gy = new int[width][height];
+        //G  = new int[width][height];
 
+        counter = 0;
         for (i=0; i<width; i++) {
             for (j=0; j<height; j++) {
-                if (i==0 || i==width-1 || j==0 || j==height-1)
-                    Gx[i][j] = Gy[i][j] = G[i][j] = 0; // Image boundary cleared
+                if (i==0 || i==width-1 || j==0 || j==height-1) {
+                    Gx[i][j] = Gy[i][j] = 0;//G[i][j] = 0; // Image boundary cleared
+                    pixels[counter] = 0;
+                    counter++;
+                }
                 else{
                     Gx[i][j] = output[i+1][j-1] + 2*output[i+1][j] + output[i+1][j+1] -
                             output[i-1][j-1] - 2*output[i-1][j] - output[i-1][j+1];
                     Gy[i][j] = output[i-1][j+1] + 2*output[i][j+1] + output[i+1][j+1] -
                             output[i-1][j-1] - 2*output[i][j-1] - output[i+1][j-1];
-                    G[i][j]  = Math.abs(Gx[i][j]) + Math.abs(Gy[i][j]);
+                    //G[i][j]  = Math.abs(Gx[i][j]) + Math.abs(Gy[i][j]);
+                    pixels[counter] = Math.abs(Gx[i][j]) + Math.abs(Gy[i][j]);
+                    counter++;
                 }
             }
         }
 
-        counter = 0;
+ /*       counter = 0;
         for(int ii = 0 ; ii < width ; ii++ )
         {
             for(int jj = 0 ; jj < height ; jj++ )
@@ -266,14 +287,14 @@ public class AfterActivity extends Activity {
                 pixels[counter] = (int) G[ii][jj];
                 counter = counter + 1;
             }
-        }
+        }*/
         counter=0;
         for(i=0;i<width;i++){
             for(j=0;j<height;j++){
                 if(pixels[counter]>3000000){
-                    //bitmap.setPixel(i, j, Color.BLACK);
+                    bitmap.setPixel(i, j, Color.BLACK);
                 }else{
-                    //bitmap.setPixel(i, j, Color.WHITE);
+                    bitmap.setPixel(i, j, Color.WHITE);
                 }
                 counter++;
             }
@@ -287,7 +308,7 @@ public class AfterActivity extends Activity {
                 if(pixels[counter]>3000000){
                     if(founded_edge==false){
                         edge_y[i] = j;
-                        Log.d("MyTag", "found edge : ("+i+","+j+")");
+                        //Log.d("MyTag", "found edge : ("+i+","+j+")");
                         founded_edge = true;
                     }
                 }
@@ -301,7 +322,7 @@ public class AfterActivity extends Activity {
                 counter++;
             }
             if(founded_edge==false){
-                Log.d("MyTag", "can't found edge");
+                //Log.d("MyTag", "can't found edge");
                 edge_y[i] = 0;
             }else{
                 founded_edge=false;
@@ -336,18 +357,18 @@ public class AfterActivity extends Activity {
 
         founded_edge=false;
         for(int q=0;q<temp_point_left_length;q++) {
-            Log.d("MyTag", "temp_point_left["+q+"][0]="+temp_point_left[q][0]+", temp_point_left["+q+"][0]="+temp_point_left[q][1]);
+            //Log.d("MyTag", "temp_point_left["+q+"][0]="+temp_point_left[q][0]+", temp_point_left["+q+"][0]="+temp_point_left[q][1]);
             for (i = temp_point_left[q][0]; i > temp_point_left[q][1]; i--) {
                 counter = i;
                 for (j = 0; j < width / 2; j++) {
                     counter += height;
-                    if (pixels[counter] > 3000000) {
+                    if (pixels[counter] > 4000000) {
                         if (founded_edge == false) {
                             founded_edge = true;
                         }
                     }
                     if (founded_edge == false) {
-                        bitmap.setPixel(j, i,  Color.CYAN);
+                        //bitmap.setPixel(j, i,  Color.CYAN);
                         /*compose_pixel[compose_pixel_length][0] = j;
                         compose_pixel[compose_pixel_length][1] = i;
                         compose_pixel_length++;*/
@@ -359,7 +380,7 @@ public class AfterActivity extends Activity {
 
         founded_edge=false;
         for(int q=0;q<temp_point_right_length;q++){
-            Log.d("MyTag", "temp_point_right["+q+"][0]="+temp_point_right[q][0]+", temp_point_right["+q+"][0]="+temp_point_right[q][1]);
+            //Log.d("MyTag", "temp_point_right["+q+"][0]="+temp_point_right[q][0]+", temp_point_right["+q+"][0]="+temp_point_right[q][1]);
             for(i = temp_point_right[q][0]; i < temp_point_right[q][1]; i++){
                 counter = (height
                         * (width-1)) + i;
@@ -371,7 +392,7 @@ public class AfterActivity extends Activity {
                         }
                     }
                     if(founded_edge == false){
-                        bitmap.setPixel(j, i, Color.CYAN);
+                        //bitmap.setPixel(j, i, Color.CYAN);
                         /*compose_pixel[compose_pixel_length][0] = j;
                         compose_pixel[compose_pixel_length][1] = i;
                         compose_pixel_length++;
