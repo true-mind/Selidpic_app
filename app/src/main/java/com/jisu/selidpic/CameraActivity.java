@@ -317,9 +317,15 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         for(int i=0;i<pictureSizes.size();i++){
             Log.d("MyTag", "Supported Picture Size : "+pictureSizes.get(i).width +" "+pictureSizes.get(i).height);
         }
+<<<<<<< HEAD
         //Camera.Size optimalSize = getOptimalPreviewSize(pictureSizes, screenWidth, camHeight);
         //Log.d("MyTag", "Optimal Preview Size : "+optimalSize.width+" "+optimalSize.height);
         //params.setPreviewSize(optimalSize.width, optimalSize.height);
+=======
+        /*Camera.Size optimalSize = getOptimalPreviewSize(pictureSizes, screenWidth, camHeight);
+        Log.d("MyTag", "Optimal Preview Size : "+optimalSize.width+" "+optimalSize.height);
+        params.setPreviewSize(optimalSize.width, optimalSize.height);*/
+>>>>>>> origin/master
         /*
         frameHeight = optimalSize.height;
         frameWidth = optimalSize.width;
@@ -338,6 +344,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         holder.addCallback(this);
     }
+/*
     private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int width, int height) {
         final double ASPECT_TOLERANCE = 0.05;
         double targetRatio = (double) width / height;
@@ -376,6 +383,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         Log.i("optimal size", ""+optimalSize.width+" x "+optimalSize.height);
         return optimalSize;
     }
+*/
 
     private void initSensor() {
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -418,10 +426,14 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
         //videoView.setOnPreparedListener(onPrepared);
     }
+<<<<<<< HEAD
 /******************************************************************************************************************************
+=======
+/*/*//******************************************************************************************************************************
+>>>>>>> origin/master
 
 
-    //************************비디오뷰의 원본비율을 유지한채로 사이즈를 조절하는 함수부
+    /*//************************비디오뷰의 원본비율을 유지한채로 사이즈를 조절하는 함수부
     //비디오뷰의 사이즈가 변경됨을 핸들러를 통해 알려줌
     //디버깅 필요 -애플리케이션 중단됨
 
@@ -449,7 +461,11 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
         }
     };
+<<<<<<< HEAD
 ******************************************************************************************************************************/
+=======
+/*//*******************************************************************************************************************************/
+>>>>>>> origin/master
     private Context getContext()//************************현재 context를 불러오는 함수
     {
         Context mContext;
