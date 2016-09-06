@@ -1,8 +1,6 @@
 package com.jisu.selidpic;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -20,15 +18,15 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Message;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -53,7 +51,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     ToggleButton toggleButton;
     Bitmap bmp;
     ImageButton button3, button4, camera_switch;
-    static final int PROGRESS_DIALOG = 0;
+
     TextView textView;
 
     ImageView imgStatus, camera_helper;
@@ -66,8 +64,6 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
     Drawable camera_user;
     Drawable camera_auto;
-
-    ProgressBar progressBar;
 
     //********************아래의 네줄은 차례대로 width와 height의 최대 픽셀을 가져오는 코드와,
     //그 최대 픽셀을 기준으로 height부의 위, 아래 margin, 그리고 그 margin을 제외한 비디오뷰의 높이를 설정하는 코드임
@@ -195,7 +191,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         camera_switch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialog(PROGRESS_DIALOG);
+
                 byte[] byteArray = outstr.toByteArray();
                 Intent intent = new Intent(CameraActivity.this, AfterActivity.class);
                 intent.putExtra("image",byteArray);
@@ -239,7 +235,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                             startActivity(intent);
                             finish();
 
-                            }
+                        }
                     };
 
                     Timer timer = new Timer();
@@ -317,15 +313,9 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         for(int i=0;i<pictureSizes.size();i++){
             Log.d("MyTag", "Supported Picture Size : "+pictureSizes.get(i).width +" "+pictureSizes.get(i).height);
         }
-<<<<<<< HEAD
-        //Camera.Size optimalSize = getOptimalPreviewSize(pictureSizes, screenWidth, camHeight);
-        //Log.d("MyTag", "Optimal Preview Size : "+optimalSize.width+" "+optimalSize.height);
-        //params.setPreviewSize(optimalSize.width, optimalSize.height);
-=======
         /*Camera.Size optimalSize = getOptimalPreviewSize(pictureSizes, screenWidth, camHeight);
         Log.d("MyTag", "Optimal Preview Size : "+optimalSize.width+" "+optimalSize.height);
         params.setPreviewSize(optimalSize.width, optimalSize.height);*/
->>>>>>> origin/master
         /*
         frameHeight = optimalSize.height;
         frameWidth = optimalSize.width;
@@ -416,7 +406,6 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         camera_helper = (ImageView) findViewById(R.id.camera_helper);
         toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
         linearLayout = (LinearLayout) findViewById(R.id.camera_linearlayout_videoview);
-        progressBar = (ProgressBar) findViewById(R.id.progressbar);
 
         //************************camMargin설정 (위, 아래)
 
@@ -426,46 +415,38 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
         //videoView.setOnPreparedListener(onPrepared);
     }
-<<<<<<< HEAD
-/******************************************************************************************************************************
-=======
 /*/*//******************************************************************************************************************************
->>>>>>> origin/master
 
 
-    /*//************************비디오뷰의 원본비율을 유지한채로 사이즈를 조절하는 함수부
-    //비디오뷰의 사이즈가 변경됨을 핸들러를 통해 알려줌
-    //디버깅 필요 -애플리케이션 중단됨
+     /*//************************비디오뷰의 원본비율을 유지한채로 사이즈를 조절하는 함수부
+     //비디오뷰의 사이즈가 변경됨을 핸들러를 통해 알려줌
+     //디버깅 필요 -애플리케이션 중단됨
 
-    private MediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedListener =
-            new MediaPlayer.OnVideoSizeChangedListener() {
-                public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(screenWidth, camHeight);
-                    videoView.setLayoutParams(layoutParams);
-                }
-            };
+     private MediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedListener =
+     new MediaPlayer.OnVideoSizeChangedListener() {
+     public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(screenWidth, camHeight);
+     videoView.setLayoutParams(layoutParams);
+     }
+     };
 
 
 
-    private MediaPlayer.OnPreparedListener onPrepared = new MediaPlayer.OnPreparedListener() {
-        public void onPrepared(MediaPlayer mp) {
-            mp.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
+     private MediaPlayer.OnPreparedListener onPrepared = new MediaPlayer.OnPreparedListener() {
+     public void onPrepared(MediaPlayer mp) {
+     mp.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
 
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(screenWidth, camHeight);
-            videoView.setLayoutParams(layoutParams);
-        }
+     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(screenWidth, camHeight);
+     videoView.setLayoutParams(layoutParams);
+     }
+     };
+
+     MediaPlayer.OnVideoSizeChangedListener sizeChangeListener = new MediaPlayer.OnVideoSizeChangedListener() {
+    @Override
+    public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+    }
     };
-
-    MediaPlayer.OnVideoSizeChangedListener sizeChangeListener = new MediaPlayer.OnVideoSizeChangedListener() {
-        @Override
-        public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-        }
-    };
-<<<<<<< HEAD
-******************************************************************************************************************************/
-=======
-/*//*******************************************************************************************************************************/
->>>>>>> origin/master
+     /*//*******************************************************************************************************************************/
     private Context getContext()//************************현재 context를 불러오는 함수
     {
         Context mContext;
@@ -554,7 +535,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         YuvImage yuvimage=new YuvImage(data,ImageFormat.NV21,width,height,null);
         yuvimage.compressToJpeg(rect, 50, outstr);
         Bitmap bmp = BitmapFactory.decodeByteArray(outstr.toByteArray(), 0, outstr.size());
-        bmp.compress(Bitmap.CompressFormat.JPEG, 50, outstr);  
+        bmp.compress(Bitmap.CompressFormat.JPEG, 50, outstr);
 
         //textView.setText("Data: "+data.toString());
         //textView.setHighlightColor(Color.WHITE);
@@ -598,20 +579,20 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         super.onStop();
     }
     //****************************************************************************************************************************** DrawOnTop
-        public class DrawOnTop extends View {
+    public class DrawOnTop extends View {
 
-            public DrawOnTop(Context context) {
-                super(context);
-            }
+        public DrawOnTop(Context context) {
+            super(context);
+        }
 
-            @Override
-            protected void onDraw(Canvas canvas) {
-                Paint paint = new Paint();
+        @Override
+        protected void onDraw(Canvas canvas) {
+            Paint paint = new Paint();
 
-                paint.setStyle(Paint.Style.FILL);
-                paint.setColor(Color.BLACK);
-                paint.setTextSize(20);
-                canvas.drawText("Test Text", 20, 20, paint);
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(Color.BLACK);
+            paint.setTextSize(20);
+            canvas.drawText("Test Text", 20, 20, paint);
 
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(2);
