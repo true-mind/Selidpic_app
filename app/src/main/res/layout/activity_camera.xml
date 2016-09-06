@@ -149,6 +149,13 @@
             android:background="@mipmap/camera_helper"/>
 
     </LinearLayout>
-
-
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="10"
+        android:secondaryProgress="50"
+        android:visibility="gone"/>
 </FrameLayout>

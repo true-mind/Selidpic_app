@@ -108,16 +108,17 @@ public class AfterActivity extends Activity {
         //Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.photo_background);
         //temp_image = getRoundedBitmap(image);
         //image = rotateImage(temp_image, 90);
-        image = rotateImage(image, 90);
-        imageView2.setImageBitmap(image);
+        image = rotateImage(imageCropped, 90);
+
 
         edge_image = getEdge(image);
+        imageView2.setImageBitmap(edge_image);
         //composed_image = getComposedImage(edge_image, image);
         //imageView2.setImageBitmap(edge_image);
 
         //imageView2.setImageBitmap(composed_image);
         colors = new int[3];
-        colors = createBackColors(image);
+        colors = createBackColors(imageCropped);
 
         btn1 = (ImageButton) findViewById(R.id.after_btn1);
         btn2 = (ImageButton) findViewById(R.id.after_btn2);
@@ -172,7 +173,7 @@ public class AfterActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                saveScreen(image);
+                saveScreen(imageCropped);
 /*
                 TimerTask taskCheck = new TimerTask() {
                     @Override
@@ -220,7 +221,7 @@ public class AfterActivity extends Activity {
     }
 
     private Bitmap getEdge(Bitmap bitmap){ // Sobel 윤곽선 검출 알고리즘 사용
-        double  Gx[][], Gy[][], G[][];
+        int Gx[][], Gy[][];//, G[][];
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
         int[] pixels = new int[width * height];
@@ -240,24 +241,30 @@ public class AfterActivity extends Activity {
                 k++;
             }
         }
-        Gx = new double[width][height];
-        Gy = new double[width][height];
-        G  = new double[width][height];
+        Gx = new int[width][height];
+        Gy = new int[width][height];
+        //G  = new int[width][height];
 
+        counter = 0;
         for (i=0; i<width; i++) {
             for (j=0; j<height; j++) {
-                if (i==0 || i==width-1 || j==0 || j==height-1)
-                    Gx[i][j] = Gy[i][j] = G[i][j] = 0; // Image boundary cleared
+                if (i==0 || i==width-1 || j==0 || j==height-1) {
+                    Gx[i][j] = Gy[i][j] = 0;// = G[i][j] = 0; // Image boundary cleared
+                    pixels[counter] = 0;
+                    counter++;
+                }
                 else{
                     Gx[i][j] = output[i+1][j-1] + 2*output[i+1][j] + output[i+1][j+1] -
                             output[i-1][j-1] - 2*output[i-1][j] - output[i-1][j+1];
                     Gy[i][j] = output[i-1][j+1] + 2*output[i][j+1] + output[i+1][j+1] -
                             output[i-1][j-1] - 2*output[i][j-1] - output[i+1][j-1];
-                    G[i][j]  = Math.abs(Gx[i][j]) + Math.abs(Gy[i][j]);
+                    pixels[counter] = Math.abs(Gx[i][j]) + Math.abs(Gy[i][j]);
+                    counter++;
                 }
             }
         }
 
+        /*
         counter = 0;
         for(int ii = 0 ; ii < width ; ii++ )
         {
@@ -266,11 +273,17 @@ public class AfterActivity extends Activity {
                 pixels[counter] = (int) G[ii][jj];
                 counter = counter + 1;
             }
-        }
+        }*/
+        int average_pixels=0;
+        int max_pixels = 0;
         counter=0;
         for(i=0;i<width;i++){
             for(j=0;j<height;j++){
-                if(pixels[counter]>3000000){
+                average_pixels+=pixels[counter];
+                if(max_pixels < pixels[counter]){
+                    max_pixels = pixels[counter];
+                }
+                if(pixels[counter]>5800000){
                     //bitmap.setPixel(i, j, Color.BLACK);
                 }else{
                     //bitmap.setPixel(i, j, Color.WHITE);
@@ -278,16 +291,18 @@ public class AfterActivity extends Activity {
                 counter++;
             }
         }
+        Log.d("MyTag", "average pixels : "+average_pixels/width/height);
+        Log.d("MyTag", "max pixel : "+max_pixels);
 
         counter=0;
         boolean founded_edge=false;
 
         for(i=0;i<width;i++){
             for(j=0;j<height;j++){
-                if(pixels[counter]>3000000){
+                if(pixels[counter]>5800000){
                     if(founded_edge==false){
                         edge_y[i] = j;
-                        Log.d("MyTag", "found edge : ("+i+","+j+")");
+                        //Log.d("MyTag", "found edge : ("+i+","+j+")");
                         founded_edge = true;
                     }
                 }
@@ -301,7 +316,7 @@ public class AfterActivity extends Activity {
                 counter++;
             }
             if(founded_edge==false){
-                Log.d("MyTag", "can't found edge");
+                //Log.d("MyTag", "can't found edge");
                 edge_y[i] = 0;
             }else{
                 founded_edge=false;
@@ -336,12 +351,12 @@ public class AfterActivity extends Activity {
 
         founded_edge=false;
         for(int q=0;q<temp_point_left_length;q++) {
-            Log.d("MyTag", "temp_point_left["+q+"][0]="+temp_point_left[q][0]+", temp_point_left["+q+"][0]="+temp_point_left[q][1]);
+            //Log.d("MyTag", "temp_point_left["+q+"][0]="+temp_point_left[q][0]+", temp_point_left["+q+"][0]="+temp_point_left[q][1]);
             for (i = temp_point_left[q][0]; i > temp_point_left[q][1]; i--) {
                 counter = i;
                 for (j = 0; j < width / 2; j++) {
                     counter += height;
-                    if (pixels[counter] > 3000000) {
+                    if (pixels[counter] > 5800000) {
                         if (founded_edge == false) {
                             founded_edge = true;
                         }
@@ -359,13 +374,13 @@ public class AfterActivity extends Activity {
 
         founded_edge=false;
         for(int q=0;q<temp_point_right_length;q++){
-            Log.d("MyTag", "temp_point_right["+q+"][0]="+temp_point_right[q][0]+", temp_point_right["+q+"][0]="+temp_point_right[q][1]);
+            //Log.d("MyTag", "temp_point_right["+q+"][0]="+temp_point_right[q][0]+", temp_point_right["+q+"][0]="+temp_point_right[q][1]);
             for(i = temp_point_right[q][0]; i < temp_point_right[q][1]; i++){
                 counter = (height
                         * (width-1)) + i;
                 for(j=width-1; j>width/2; j--){
                     counter -= height;
-                    if(pixels[counter] > 3000000) {
+                    if(pixels[counter] > 5800000) {
                         if(founded_edge == false){
                             founded_edge = true;
                         }
@@ -380,6 +395,7 @@ public class AfterActivity extends Activity {
                 founded_edge=false;
             }
         }
+
 
         return bitmap;
     }

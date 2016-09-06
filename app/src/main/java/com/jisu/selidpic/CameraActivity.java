@@ -1,6 +1,8 @@
 package com.jisu.selidpic;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -18,15 +20,15 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Environment;
+import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -51,7 +53,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     ToggleButton toggleButton;
     Bitmap bmp;
     ImageButton button3, button4, camera_switch;
-
+    static final int PROGRESS_DIALOG = 0;
     TextView textView;
 
     ImageView imgStatus, camera_helper;
@@ -64,6 +66,8 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
     Drawable camera_user;
     Drawable camera_auto;
+
+    ProgressBar progressBar;
 
     //********************아래의 네줄은 차례대로 width와 height의 최대 픽셀을 가져오는 코드와,
     //그 최대 픽셀을 기준으로 height부의 위, 아래 margin, 그리고 그 margin을 제외한 비디오뷰의 높이를 설정하는 코드임
@@ -191,7 +195,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         camera_switch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                showDialog(PROGRESS_DIALOG);
                 byte[] byteArray = outstr.toByteArray();
                 Intent intent = new Intent(CameraActivity.this, AfterActivity.class);
                 intent.putExtra("image",byteArray);
@@ -313,9 +317,9 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         for(int i=0;i<pictureSizes.size();i++){
             Log.d("MyTag", "Supported Picture Size : "+pictureSizes.get(i).width +" "+pictureSizes.get(i).height);
         }
-        Camera.Size optimalSize = getOptimalPreviewSize(pictureSizes, screenWidth, camHeight);
-        Log.d("MyTag", "Optimal Preview Size : "+optimalSize.width+" "+optimalSize.height);
-        params.setPreviewSize(optimalSize.width, optimalSize.height);
+        //Camera.Size optimalSize = getOptimalPreviewSize(pictureSizes, screenWidth, camHeight);
+        //Log.d("MyTag", "Optimal Preview Size : "+optimalSize.width+" "+optimalSize.height);
+        //params.setPreviewSize(optimalSize.width, optimalSize.height);
         /*
         frameHeight = optimalSize.height;
         frameWidth = optimalSize.width;
@@ -404,6 +408,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         camera_helper = (ImageView) findViewById(R.id.camera_helper);
         toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
         linearLayout = (LinearLayout) findViewById(R.id.camera_linearlayout_videoview);
+        progressBar = (ProgressBar) findViewById(R.id.progressbar);
 
         //************************camMargin설정 (위, 아래)
 
@@ -411,9 +416,9 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
         layoutParams.gravity = Gravity.CENTER;
 
-        videoView.setOnPreparedListener(onPrepared);
+        //videoView.setOnPreparedListener(onPrepared);
     }
-//******************************************************************************************************************************
+/******************************************************************************************************************************
 
 
     //************************비디오뷰의 원본비율을 유지한채로 사이즈를 조절하는 함수부
@@ -444,7 +449,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
         }
     };
-//******************************************************************************************************************************
+******************************************************************************************************************************/
     private Context getContext()//************************현재 context를 불러오는 함수
     {
         Context mContext;
