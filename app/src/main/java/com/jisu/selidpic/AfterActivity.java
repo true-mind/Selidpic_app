@@ -109,16 +109,14 @@ public class AfterActivity extends Activity {
         //Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.photo_background);
         //temp_image = getRoundedBitmap(image);
         //image = rotateImage(temp_image, 90);
-<<<<<<< HEAD
+
         image = rotateImage(imageCropped, 90);
 
 
         edge_image = getEdge(image);
-=======
         imageCropped = rotateImage(imageCropped, 90);
 
         edge_image = getEdge(imageCropped);
->>>>>>> origin/master
         imageView2.setImageBitmap(edge_image);
         //composed_image = getComposedImage(edge_image, image);
         //imageView2.setImageBitmap(edge_image);
@@ -242,11 +240,7 @@ public class AfterActivity extends Activity {
     }
 
     private Bitmap getEdge(Bitmap bitmap){ // Sobel 윤곽선 검출 알고리즘 사용
-<<<<<<< HEAD
         int Gx[][], Gy[][];//, G[][];
-=======
-        int  Gx[][], Gy[][];//, G[][];
->>>>>>> origin/master
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
         int[] pixels = new int[width * height];
@@ -274,11 +268,8 @@ public class AfterActivity extends Activity {
         for (i=0; i<width; i++) {
             for (j=0; j<height; j++) {
                 if (i==0 || i==width-1 || j==0 || j==height-1) {
-<<<<<<< HEAD
                     Gx[i][j] = Gy[i][j] = 0;// = G[i][j] = 0; // Image boundary cleared
-=======
                     Gx[i][j] = Gy[i][j] = 0;//G[i][j] = 0; // Image boundary cleared
->>>>>>> origin/master
                     pixels[counter] = 0;
                     counter++;
                 }
@@ -287,22 +278,16 @@ public class AfterActivity extends Activity {
                             output[i-1][j-1] - 2*output[i-1][j] - output[i-1][j+1];
                     Gy[i][j] = output[i-1][j+1] + 2*output[i][j+1] + output[i+1][j+1] -
                             output[i-1][j-1] - 2*output[i][j-1] - output[i+1][j-1];
-<<<<<<< HEAD
-=======
                     //G[i][j]  = Math.abs(Gx[i][j]) + Math.abs(Gy[i][j]);
->>>>>>> origin/master
                     pixels[counter] = Math.abs(Gx[i][j]) + Math.abs(Gy[i][j]);
                     counter++;
                 }
             }
         }
 
-<<<<<<< HEAD
         /*
         counter = 0;
-=======
  /*       counter = 0;
->>>>>>> origin/master
         for(int ii = 0 ; ii < width ; ii++ )
         {
             for(int jj = 0 ; jj < height ; jj++ )
@@ -311,143 +296,139 @@ public class AfterActivity extends Activity {
                 counter = counter + 1;
             }
         }*/
-<<<<<<< HEAD
         int average_pixels=0;
         int max_pixels = 0;
         counter=0;
-        for(i=0;i<width;i++){
-            for(j=0;j<height;j++){
-                average_pixels+=pixels[counter];
-                if(max_pixels < pixels[counter]){
+        for(i=0;i<width;i++) {
+            for (j = 0; j < height; j++) {
+                average_pixels += pixels[counter];
+                if (max_pixels < pixels[counter]) {
                     max_pixels = pixels[counter];
                 }
-                if(pixels[counter]>5800000){
+                if (pixels[counter] > 5800000) {
                     //bitmap.setPixel(i, j, Color.BLACK);
-=======
-        counter=0;
-        for(i=0;i<width;i++){
-            for(j=0;j<height;j++){
-                if(pixels[counter]>3000000){
-                    bitmap.setPixel(i, j, Color.BLACK);
->>>>>>> origin/master
-                }else{
-                    bitmap.setPixel(i, j, Color.WHITE);
-                }
-                counter++;
-            }
-        }
-        Log.d("MyTag", "average pixels : "+average_pixels/width/height);
-        Log.d("MyTag", "max pixel : "+max_pixels);
-
-        counter=0;
-        boolean founded_edge=false;
-
-        for(i=0;i<width;i++){
-            for(j=0;j<height;j++){
-                if(pixels[counter]>5800000){
-                    if(founded_edge==false){
-                        edge_y[i] = j;
-                        //Log.d("MyTag", "found edge : ("+i+","+j+")");
-                        founded_edge = true;
+                    counter = 0;
+                    for (i = 0; i < width; i++) {
+                        for (j = 0; j < height; j++) {
+                            if (pixels[counter] > 3000000) {
+                                bitmap.setPixel(i, j, Color.BLACK);
+                            } else {
+                                bitmap.setPixel(i, j, Color.WHITE);
+                            }
+                            counter++;
+                        }
                     }
-                }
-                if(founded_edge==false){
-                    bitmap.setPixel(i, j, Color.CYAN);
+                    Log.d("MyTag", "average pixels : " + average_pixels / width / height);
+                    Log.d("MyTag", "max pixel : " + max_pixels);
+
+                    counter = 0;
+                    boolean founded_edge = false;
+
+                    for (i = 0; i < width; i++) {
+                        for (j = 0; j < height; j++) {
+                            if (pixels[counter] > 5800000) {
+                                if (founded_edge == false) {
+                                    edge_y[i] = j;
+                                    //Log.d("MyTag", "found edge : ("+i+","+j+")");
+                                    founded_edge = true;
+                                }
+                            }
+                            if (founded_edge == false) {
+                                bitmap.setPixel(i, j, Color.CYAN);
                     /*
                     compose_pixel[compose_pixel_length][0] = i;
                     compose_pixel[compose_pixel_length][1] = j;
                     compose_pixel_length++;*/
-                }
-                counter++;
-            }
-            if(founded_edge==false){
-                //Log.d("MyTag", "can't found edge");
-                edge_y[i] = 0;
-            }else{
-                founded_edge=false;
-            }
-        }
-
-        j=0;
-        for(i=width/2;i<width-1;i++){
-            if(edge_y[i]-edge_y[i-1] > (height/4)){
-                temp_point_right[j][0] = edge_y[i-1];
-                temp_point_right[j][1] = edge_y[i];
-                j++;
-                temp_point_right_length++;
-                for(int q=0;q<height;q++){
-                    //bitmap.setPixel(i, q, Color.BLUE);
-                }
-            }
-        }
-
-        j=0;
-        for(i=1;i<width/2;i++){
-            if(edge_y[i-1]-edge_y[i] > (height/4)){
-                temp_point_left[j][0] = edge_y[i-1];
-                temp_point_left[j][1] = edge_y[i];
-                j++;
-                temp_point_left_length++;
-                for(int q=0;q<height;q++){
-                    //bitmap.setPixel(i, q, Color.GREEN);
-                }
-            }
-        }
-
-        founded_edge=false;
-        for(int q=0;q<temp_point_left_length;q++) {
-            //Log.d("MyTag", "temp_point_left["+q+"][0]="+temp_point_left[q][0]+", temp_point_left["+q+"][0]="+temp_point_left[q][1]);
-            for (i = temp_point_left[q][0]; i > temp_point_left[q][1]; i--) {
-                counter = i;
-                for (j = 0; j < width / 2; j++) {
-                    counter += height;
-<<<<<<< HEAD
-                    if (pixels[counter] > 5800000) {
-=======
-                    if (pixels[counter] > 4000000) {
->>>>>>> origin/master
+                            }
+                            counter++;
+                        }
                         if (founded_edge == false) {
-                            founded_edge = true;
+                            //Log.d("MyTag", "can't found edge");
+                            edge_y[i] = 0;
+                        } else {
+                            founded_edge = false;
                         }
                     }
-                    if (founded_edge == false) {
-                        //bitmap.setPixel(j, i,  Color.CYAN);
+
+                    j = 0;
+                    for (i = width / 2; i < width - 1; i++) {
+                        if (edge_y[i] - edge_y[i - 1] > (height / 4)) {
+                            temp_point_right[j][0] = edge_y[i - 1];
+                            temp_point_right[j][1] = edge_y[i];
+                            j++;
+                            temp_point_right_length++;
+                            for (int q = 0; q < height; q++) {
+                                //bitmap.setPixel(i, q, Color.BLUE);
+                            }
+                        }
+                    }
+
+                    j = 0;
+                    for (i = 1; i < width / 2; i++) {
+                        if (edge_y[i - 1] - edge_y[i] > (height / 4)) {
+                            temp_point_left[j][0] = edge_y[i - 1];
+                            temp_point_left[j][1] = edge_y[i];
+                            j++;
+                            temp_point_left_length++;
+                            for (int q = 0; q < height; q++) {
+                                //bitmap.setPixel(i, q, Color.GREEN);
+                            }
+                        }
+                    }
+
+                    founded_edge = false;
+                    for (int q = 0; q < temp_point_left_length; q++) {
+                        //Log.d("MyTag", "temp_point_left["+q+"][0]="+temp_point_left[q][0]+", temp_point_left["+q+"][0]="+temp_point_left[q][1]);
+                        for (i = temp_point_left[q][0]; i > temp_point_left[q][1]; i--) {
+                            counter = i;
+                            for (j = 0; j < width / 2; j++) {
+                                counter += height;
+                                if (pixels[counter] > 5800000) {
+                                    if (pixels[counter] > 4000000) {
+                                        if (founded_edge == false) {
+                                            founded_edge = true;
+                                        }
+                                    }
+                                    if (founded_edge == false) {
+                                        //bitmap.setPixel(j, i,  Color.CYAN);
                         /*compose_pixel[compose_pixel_length][0] = j;
                         compose_pixel[compose_pixel_length][1] = i;
                         compose_pixel_length++;*/
-                    }
-                }
-                founded_edge = false;
-            }
-        }
-
-        founded_edge=false;
-        for(int q=0;q<temp_point_right_length;q++){
-            //Log.d("MyTag", "temp_point_right["+q+"][0]="+temp_point_right[q][0]+", temp_point_right["+q+"][0]="+temp_point_right[q][1]);
-            for(i = temp_point_right[q][0]; i < temp_point_right[q][1]; i++){
-                counter = (height
-                        * (width-1)) + i;
-                for(j=width-1; j>width/2; j--){
-                    counter -= height;
-                    if(pixels[counter] > 5800000) {
-                        if(founded_edge == false){
-                            founded_edge = true;
+                                    }
+                                }
+                                founded_edge = false;
+                            }
                         }
-                    }
-                    if(founded_edge == false){
-                        //bitmap.setPixel(j, i, Color.CYAN);
+
+                        founded_edge = false;
+                        for (int q = 0; q < temp_point_right_length; q++) {
+                            //Log.d("MyTag", "temp_point_right["+q+"][0]="+temp_point_right[q][0]+", temp_point_right["+q+"][0]="+temp_point_right[q][1]);
+                            for (i = temp_point_right[q][0]; i < temp_point_right[q][1]; i++) {
+                                counter = (height
+                                        * (width - 1)) + i;
+                                for (j = width - 1; j > width / 2; j--) {
+                                    counter -= height;
+                                    if (pixels[counter] > 5800000) {
+                                        if (founded_edge == false) {
+                                            founded_edge = true;
+                                        }
+                                    }
+                                    if (founded_edge == false) {
+                                        //bitmap.setPixel(j, i, Color.CYAN);
                         /*compose_pixel[compose_pixel_length][0] = j;
                         compose_pixel[compose_pixel_length][1] = i;
                         compose_pixel_length++;
-                    */}
-                }
-                founded_edge=false;
-            }
-        }
+                    */
+                                    }
+                                }
+                                founded_edge = false;
+                            }
+                        }
 
 
-        return bitmap;
-    }
+                        return bitmap;
+                    }
+
 
 
     private static Bitmap getRoundedBitmap(Bitmap bitmap) {
