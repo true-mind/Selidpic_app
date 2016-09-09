@@ -21,12 +21,14 @@ import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -52,7 +54,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     Bitmap bmp;
     ImageButton button3, button4, camera_switch;
 
-    TextView textView;
+    TextView auto_textview_number, auto_textview_guide;
 
     ImageView imgStatus, camera_helper;
 
@@ -64,6 +66,8 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
     Drawable camera_user;
     Drawable camera_auto;
+
+    ProgressBar progressBar;
 
     //********************아래의 네줄은 차례대로 width와 height의 최대 픽셀을 가져오는 코드와,
     //그 최대 픽셀을 기준으로 height부의 위, 아래 margin, 그리고 그 margin을 제외한 비디오뷰의 높이를 설정하는 코드임
@@ -87,9 +91,11 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     private Timer timer;
 
     private Boolean brightness_ok = false;
+    private Boolean autoshot = false;
 
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
+
 
     //******************************************************************************************************************************
     @Override
@@ -104,13 +110,33 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
         timer = new Timer(false);
         handler = new Handler();
+
+        final Handler timeHandler = new Handler(){
+            public void handleMessage(Message msg){
+                super.handleMessage(msg);
+                if(msg.arg1==4){
+                    auto_textview_guide.setVisibility(View.VISIBLE);
+                }
+                else if(msg.arg1==3){
+                    auto_textview_guide.setVisibility(View.INVISIBLE);
+                    auto_textview_number.setVisibility(View.VISIBLE);
+                    auto_textview_number.setText("3");
+                }else if(msg.arg1==2){
+                    auto_textview_number.setText("2");
+                }
+                else if(msg.arg2==1){
+                    auto_textview_number.setText("1");
+                }
+            }
+        };
+
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        if (sensorValue < 50) {
+                        if (sensorValue < 30) {
                             Toast.makeText(CameraActivity.this, "사용자의 조명이 너무 어두움", Toast.LENGTH_SHORT).show();
                             brightness_ok = false;
                         } else if (sensorValue > 320) {
@@ -118,6 +144,50 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                             brightness_ok = false;
                         } else {
                             brightness_ok = true;
+                            Log.i("MyTag", "autoshot debug, autoshot:"+autoshot.booleanValue());
+                            if(autoshot){
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        int i=4;
+                                        Log.i("MyTag", "autoshot debug, i="+i);
+                                        while(autoshot){
+                                            if(i==0){
+                                                byte[] byteArray = outstr.toByteArray();
+                                                Intent intent = new Intent(CameraActivity.this, AfterActivity.class);
+                                                intent.putExtra("image",byteArray);
+                                                intent.putExtra("width", width);
+                                                intent.putExtra("height", height);
+                                                intent.putExtra("screenWidth", screenWidth);
+                                                intent.putExtra("screenHeight", screenHeight);
+                                                intent.putExtra("statview", statview);
+                                                startActivity(intent);
+                                                finish();
+                                                break;
+                                            }else {
+                                                Message msg = timeHandler.obtainMessage();
+                                                msg.arg1 = i;
+                                                timeHandler.sendMessage(msg);
+                                            }
+
+                                            if(i==4){
+                                                try {
+                                                    Thread.sleep(3000);
+                                                } catch (InterruptedException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }else {
+                                                try {
+                                                    Thread.sleep(1000);
+                                                } catch (InterruptedException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                            i--;
+                                        }
+                                    }
+                                }).start();
+                            }
                         }
                     }
                 });
@@ -161,6 +231,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         }
 
     }
+
     //****************************************************************************************************************************** Button and switches
     private void initListener() {
         button3.setOnClickListener(new View.OnClickListener() {
@@ -214,11 +285,16 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                 if(toggleButton.isChecked()){
                     camera_switch.setClickable(true);
                     camera_switch.setImageDrawable(camera_user);
+                    autoshot = false;
                 }
                 else{
                     camera_switch.setClickable(false);
                     camera_switch.setImageDrawable(camera_auto);
+                    autoshot = true;
+/*
+                    if(brightness_ok){
 
+                    }
                     TimerTask taskCheck = new TimerTask() {
                         @Override
 
@@ -240,6 +316,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
                     Timer timer = new Timer();
                     timer.schedule(taskCheck, 5000);
+                    */
 
                 }
             }
@@ -406,6 +483,9 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         camera_helper = (ImageView) findViewById(R.id.camera_helper);
         toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
         linearLayout = (LinearLayout) findViewById(R.id.camera_linearlayout_videoview);
+
+        auto_textview_guide = (TextView) findViewById(R.id.camera_auto_guide_textview);
+        auto_textview_number = (TextView) findViewById(R.id.camera_auto_guide_number);
 
         //************************camMargin설정 (위, 아래)
 
