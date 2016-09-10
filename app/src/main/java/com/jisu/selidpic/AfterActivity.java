@@ -1,5 +1,6 @@
 package com.jisu.selidpic;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,11 +13,12 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -35,10 +37,13 @@ import java.util.Date;
  */
 public class AfterActivity extends Activity {
 
+    Drawable ConP, Con;
     ImageButton btn1, btn2, btn3, btn4;
     ImageView imageView2;
     Bitmap image, rounded_image, imageCropped, composed_image, edge_image, temp_image;
     String filename;
+    double display;
+    int convertCount;
     int width, height, statview;
     int screenWidth, screenHeight, widthMid, heightMid, picWidth, picHeight;
     int cropStartX, cropStartY;
@@ -58,8 +63,7 @@ public class AfterActivity extends Activity {
         width = getIntent().getIntExtra("width", 0);
         height = getIntent().getIntExtra("height", 0);
         statview = getIntent().getIntExtra("statview", 5);
-        //screenWidth = getIntent().getIntExtra("screenWidth", 0);
-        //screenHeight = getIntent().getIntExtra("screenHeight", 0);
+        display = getIntent().getDoubleExtra("display", 0);
 
         widthMid = screenWidth/2;
         heightMid = screenHeight/2;
@@ -103,17 +107,13 @@ public class AfterActivity extends Activity {
             imageCropped = Bitmap.createBitmap(image, cropStartX, cropStartY, picWidth, picHeight);
 
         }
-
+        convertCount = 0;
 
         imageView2 = (ImageView)findViewById(R.id.imageView2);
-
-        //Bitmap bm = BitmapFactory.decodeResource(getResources(), R.mipmap.photo_background);
-        //temp_image = getRoundedBitmap(image);
-        //image = rotateImage(temp_image, 90);
         imageCropped = rotateImage(imageCropped, 90);
-
         edge_image = getEdge(imageCropped);
-        imageView2.setImageBitmap(edge_image);
+        imageView2.setImageBitmap(imageCropped);
+
         //composed_image = getComposedImage(edge_image, image);
         //imageView2.setImageBitmap(edge_image);
 
@@ -125,6 +125,10 @@ public class AfterActivity extends Activity {
         btn2 = (ImageButton) findViewById(R.id.after_btn2);
         btn3 = (ImageButton) findViewById(R.id.after_btn3);
         btn4 = (ImageButton) findViewById(R.id.after_btn4);
+
+        Con = getResources().getDrawable(R.mipmap.after_convert);
+        ConP = getResources().getDrawable(R.mipmap.after_convert_pressed);
+
 
         //temp color picker
 /*        ImageView view1, view2, view3;
@@ -144,7 +148,7 @@ public class AfterActivity extends Activity {
                 File fileRoute = null;
                 fileRoute = Environment.getExternalStorageDirectory(); //sdcard 파일경로 선언
 
-                File files = new File(fileRoute,"/SelidPic/"+str_name); //temp폴더에 이름으로 저장된 jpeg파일 경로 선언
+                File files = new File(fileRoute,"/SelidPic/"+str_name); //폴더에 이름으로 저장된 jpeg파일 경로 선언
 
                 if(files.exists()==true)  //파일유무확인
                 {
@@ -152,18 +156,32 @@ public class AfterActivity extends Activity {
                     intentSend.setType("image/*");
                     //이름으로 저장된 파일의 경로를 넣어서 공유하기
                     intentSend.putExtra(Intent.EXTRA_STREAM, Uri.parse(fileRoute+"/SelidPic/"+str_name));
-                    startActivity(Intent.createChooser(intentSend, "공유")); //공유하기 창 띄우기
+                    startActivity(Intent.createChooser(intentSend, "Share")); //공유하기 창 띄우기
                 }else{
                     //파일이 없다면 저장을 해달라는 토스트메세지를 띄운다.
-                    Toast.makeText(getApplicationContext(), "저장을 먼저 해주세요", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Save first", Toast.LENGTH_LONG).show();
                 }
             }
         });
 
         btn2.setOnClickListener(new View.OnClickListener() {
+            @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onClick(View v) {
                 Toast.makeText(AfterActivity.this, "Convert", Toast.LENGTH_SHORT).show();
+                imageView2.setImageBitmap(null);
+                if (convertCount==0){
+                    btn2.setBackground(ConP);
+                    imageView2.setImageBitmap(imageCropped);
+                    convertCount--;
+                }
+                else{
+                    btn2.setBackground(Con);
+                    imageView2.setImageBitmap(edge_image);
+                    convertCount++;
+
+                }
+                imageView2.invalidate();
 
             }
         });
@@ -171,11 +189,17 @@ public class AfterActivity extends Activity {
         btn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                screenWidth = getIntent().getIntExtra("screenWidth", 0);
+                screenHeight = getIntent().getIntExtra("screenHeight", 0);
+
                 Intent intent = new Intent(AfterActivity.this, CameraActivity.class);
 
                 intent.putExtra("width", width);
                 intent.putExtra("height", height);
                 intent.putExtra("view", statview);
+                intent.putExtra("screenWidth", screenWidth);
+                intent.putExtra("screenHeight", screenHeight);
 
                 startActivity(intent);
                 finish();
@@ -187,24 +211,7 @@ public class AfterActivity extends Activity {
         btn4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 saveScreen(imageCropped);
-/*
-                TimerTask taskCheck = new TimerTask() {
-                    @Override
-                    public void run() {
-                        String filepath = Environment.getExternalStorageDirectory()
-                                .getAbsolutePath() + "/SelidPic/" + filename;
-                        File file = new File(filepath);
-                        if (file.exists()){
-                            Toast.makeText(AfterActivity.this, "Save", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                };
-
-                Timer timer = new Timer();
-                timer.schedule(taskCheck, 5000);
-*/
                 Toast.makeText(AfterActivity.this, "Saved", Toast.LENGTH_SHORT).show();
             }
 
