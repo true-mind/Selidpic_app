@@ -1,6 +1,7 @@
 package com.jisu.selidpic;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -115,17 +116,17 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         final Handler timeHandler = new Handler(){
             public void handleMessage(Message msg){
                 super.handleMessage(msg);
-                if(msg.arg1==4){
+                if(msg.arg1==5){
                     auto_textview_guide.setVisibility(View.VISIBLE);
                 }
-                else if(msg.arg1==3){
+                else if(msg.arg1==4){
                     auto_textview_guide.setVisibility(View.INVISIBLE);
                     auto_textview_number.setVisibility(View.VISIBLE);
                     auto_textview_number.setText("3");
-                }else if(msg.arg1==2){
+                }else if(msg.arg1==3){
                     auto_textview_number.setText("2");
                 }
-                else if(msg.arg2==1){
+                else if(msg.arg1==2){
                     auto_textview_number.setText("1");
                 }
             }
@@ -150,29 +151,20 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        int i=4;
+                                        int i=5;
                                         Log.i("MyTag", "autoshot debug, i="+i);
                                         while(autoshot){
-                                            if(i==0){
-                                                byte[] byteArray = outstr.toByteArray();
-                                                Intent intent = new Intent(CameraActivity.this, AfterActivity.class);
-                                                intent.putExtra("image",byteArray);
-                                                intent.putExtra("width", width);
-                                                intent.putExtra("height", height);
-                                                intent.putExtra("screenWidth", screenWidth);
-                                                intent.putExtra("screenHeight", screenHeight);
-                                                intent.putExtra("statview", statview);
-                                                intent.putExtra("display", display);
-                                                startActivity(intent);
-                                                finish();
+                                            if(i==1){
+                                                func_waiting();
                                                 break;
-                                            }else {
+                                            }
+                                            else {
                                                 Message msg = timeHandler.obtainMessage();
                                                 msg.arg1 = i;
                                                 timeHandler.sendMessage(msg);
                                             }
 
-                                            if(i==4){
+                                            if(i==5){
                                                 try {
                                                     Thread.sleep(3000);
                                                 } catch (InterruptedException e) {
@@ -194,7 +186,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                     }
                 });
             }
-        }, 5000, 5000);
+        }, 5000, 9000);
         //DrawOnTop mDraw = new DrawOnTop(this);
         //addContentView(mDraw, new ViewGroup.LayoutParams
         //        (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -232,6 +224,20 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
         }
 
+    }
+
+    private void func_waiting() {
+        byte[] byteArray = outstr.toByteArray();
+        Intent intent = new Intent(CameraActivity.this, AfterActivity.class);
+        intent.putExtra("image",byteArray);
+        intent.putExtra("width", width);
+        intent.putExtra("height", height);
+        intent.putExtra("screenWidth", screenWidth);
+        intent.putExtra("screenHeight", screenHeight);
+        intent.putExtra("statview", statview);
+        intent.putExtra("display", display);
+        startActivity(intent);
+        finish();
     }
 
     //****************************************************************************************************************************** Button and switches

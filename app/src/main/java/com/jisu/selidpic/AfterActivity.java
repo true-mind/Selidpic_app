@@ -2,6 +2,7 @@ package com.jisu.selidpic;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,6 +19,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -36,11 +39,11 @@ import java.util.Date;
  * Created by 현석 on 2016-08-09.
  */
 public class AfterActivity extends Activity {
-
+    ProgressDialog progressdialog;
     Drawable ConP, Con;
     ImageButton btn1, btn2, btn3, btn4;
     ImageView imageView2;
-    Bitmap image, rounded_image, imageCropped, composed_image, edge_image, temp_image;
+    Bitmap image, imageCropped, edge_image, temp_image;
     String filename;
     double display;
     int convertCount;
@@ -53,91 +56,90 @@ public class AfterActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_after);
+        initView();
+        initListener();
+        progressdialog = ProgressDialog.show(this, "로딩중", "Loading...please wait", true, false);
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                byte[] arr = getIntent().getByteArrayExtra("image");
+                image = BitmapFactory.decodeByteArray(arr, 0, arr.length);
 
-        byte[] arr = getIntent().getByteArrayExtra("image");
-        image = BitmapFactory.decodeByteArray(arr, 0, arr.length);
+                screenWidth = image.getWidth();
+                screenHeight = image.getHeight();
 
-        screenWidth = image.getWidth();
-        screenHeight = image.getHeight();
+                width = getIntent().getIntExtra("width", 0);
+                height = getIntent().getIntExtra("height", 0);
+                statview = getIntent().getIntExtra("statview", 5);
+                display = getIntent().getDoubleExtra("display", 0);
 
-        width = getIntent().getIntExtra("width", 0);
-        height = getIntent().getIntExtra("height", 0);
-        statview = getIntent().getIntExtra("statview", 5);
-        display = getIntent().getDoubleExtra("display", 0);
+                widthMid = screenWidth/2;
+                heightMid = screenHeight/2;
 
-        widthMid = screenWidth/2;
-        heightMid = screenHeight/2;
+                picHeight = (screenWidth/width*height);
+                picWidth = (screenHeight/height*width);
 
-        picHeight = (screenWidth/width*height);
-        picWidth = (screenHeight/height*width);
-/*
-        Log.d("MyTag", "width:"+width);
-        Log.d("MyTag", "height:"+height);
-        Log.d("MyTag", "picWidth:"+picWidth);
-        Log.d("MyTag", "picHeight:"+picHeight);
-        Log.d("MyTag", "screenWidth:"+screenWidth);
-        Log.d("MyTag", "screenHeight:"+screenHeight);
-        Log.d("MyTag", "widthMid:"+widthMid);
-        Log.d("MyTag", "heightMid:"+heightMid);
-*/
-
-        if(picHeight>screenHeight){
-            picHeight = screenHeight;
-            picWidth = (picHeight/height*width);
-            cropStartX = widthMid - (picWidth/2);
-            cropStartY = heightMid - (picHeight/2);
+                if(picHeight>screenHeight){
+                    picHeight = screenHeight;
+                    picWidth = (picHeight/height*width);
+                    cropStartX = widthMid - (picWidth/2);
+                    cropStartY = heightMid - (picHeight/2);
 
 
-            Log.d("MyTag", "cropStartX:"+cropStartX);
-            Log.d("MyTag", "cropStartY:"+cropStartY);
-            Log.d("MyTag", "widthMid:"+widthMid);
-            Log.d("MyTag", "heightMid:"+heightMid);
-            Log.d("MyTag", "picWidth:"+picWidth);
-            Log.d("MyTag", "picHeight:"+picHeight);
+                    Log.d("MyTag", "cropStartX:"+cropStartX);
+                    Log.d("MyTag", "cropStartY:"+cropStartY);
+                    Log.d("MyTag", "widthMid:"+widthMid);
+                    Log.d("MyTag", "heightMid:"+heightMid);
+                    Log.d("MyTag", "picWidth:"+picWidth);
+                    Log.d("MyTag", "picHeight:"+picHeight);
 
-            imageCropped = Bitmap.createBitmap(image, cropStartX, cropStartY, picWidth, picHeight);
+                    imageCropped = Bitmap.createBitmap(image, cropStartX, cropStartY, picWidth, picHeight);
+                }
+                else{
+
+                    picWidth = screenWidth;
+                    picHeight = (picWidth/width*height);
+                    cropStartX = widthMid - (picWidth/2);
+                    cropStartY = heightMid - (picHeight/2);
+
+                    imageCropped = Bitmap.createBitmap(image, cropStartX, cropStartY, picWidth, picHeight);
+
+                }
+                convertCount = 0;
+                temp_image = rotateImage(imageCropped, 90);
+
+                edge_image = getEdge(temp_image);
+
+                colors = new int[3];
+                colors = createBackColors(imageCropped);
+
+                Con = getResources().getDrawable(R.mipmap.after_convert);
+                ConP = getResources().getDrawable(R.mipmap.after_convert_pressed);
+
+                threadhandler.sendEmptyMessage(0);
+            }
+        });
+        thread.start();
+
+    }
+
+    private Handler threadhandler = new Handler(){
+        public void handleMessage(Message msg){
+            imageView2.setImageBitmap(edge_image);
+            progressdialog.dismiss();
         }
-        else{
+    };
 
-            picWidth = screenWidth;
-            picHeight = (picWidth/width*height);
-            cropStartX = widthMid - (picWidth/2);
-            cropStartY = heightMid - (picHeight/2);
-
-            imageCropped = Bitmap.createBitmap(image, cropStartX, cropStartY, picWidth, picHeight);
-
-        }
-        convertCount = 0;
-
+    private void initView() {
         imageView2 = (ImageView)findViewById(R.id.imageView2);
-        imageCropped = rotateImage(imageCropped, 90);
-        edge_image = getEdge(imageCropped);
-        imageView2.setImageBitmap(imageCropped);
-
-        //composed_image = getComposedImage(edge_image, image);
-        //imageView2.setImageBitmap(edge_image);
-
-        //imageView2.setImageBitmap(composed_image);
-        colors = new int[3];
-        colors = createBackColors(imageCropped);
-
         btn1 = (ImageButton) findViewById(R.id.after_btn1);
         btn2 = (ImageButton) findViewById(R.id.after_btn2);
         btn3 = (ImageButton) findViewById(R.id.after_btn3);
         btn4 = (ImageButton) findViewById(R.id.after_btn4);
-
-        Con = getResources().getDrawable(R.mipmap.after_convert);
-        ConP = getResources().getDrawable(R.mipmap.after_convert_pressed);
+    }
 
 
-        //temp color picker
-/*        ImageView view1, view2, view3;
-        view1 = (ImageView) findViewById(R.id.tempcolorview1);
-        view2 = (ImageView) findViewById(R.id.tempcolorview2);
-        view3 = (ImageView) findViewById(R.id.tempcolorview3);
-        view1.setBackgroundColor(colors[0]);
-        view2.setBackgroundColor(colors[1]);
-        view3.setBackgroundColor(colors[2]);*/
+    private void initListener() {
 
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,7 +174,7 @@ public class AfterActivity extends Activity {
                 imageView2.setImageBitmap(null);
                 if (convertCount==0){
                     btn2.setBackground(ConP);
-                    imageView2.setImageBitmap(imageCropped);
+                    imageView2.setImageBitmap(rotateImage(imageCropped, 90));
                     convertCount--;
                 }
                 else{
@@ -242,10 +244,10 @@ public class AfterActivity extends Activity {
         return colors;
     }
 
-    private Bitmap getEdge(Bitmap bitmap){ // Sobel 윤곽선 검출 알고리즘 사용
+    private Bitmap getEdge(Bitmap bitmapimage){ // Sobel 윤곽선 검출 알고리즘 사용
         int  Gx[][], Gy[][];//, G[][];
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
+        int width = bitmapimage.getWidth();
+        int height = bitmapimage.getHeight();
         int[] pixels = new int[width * height];
         int[][] output = new int[width][height];
         int i, j, counter, k=0;
@@ -258,7 +260,7 @@ public class AfterActivity extends Activity {
 
         for(i=0;i<width;i++){
             for(j=0;j<height;j++){
-                pixels[k]=bitmap.getPixel(i, j);
+                pixels[k]=bitmapimage.getPixel(i, j);
                 output[i][j] = pixels[k];
                 k++;
             }
@@ -312,6 +314,98 @@ public class AfterActivity extends Activity {
 
         counter=0;
         boolean founded_edge=false;
+/*
+        for(i=0;i<width;i++){
+            for(j=0;j<height;j++){
+                if(pixels[counter]>3000000){
+                    if(founded_edge==false){
+                        edge_y[i] = j;
+                        //Log.d("MyTag", "found edge : ("+i+","+j+")");
+                        founded_edge = true;
+                    }
+                }
+                if(founded_edge==false){
+                    bitmapimage.setPixel(i, j, Color.CYAN);
+                }
+                counter++;
+            }
+            if(founded_edge==false){
+                //Log.d("MyTag", "can't found edge");
+                edge_y[i] = 0;
+            }else{
+                founded_edge=false;
+            }
+        }*/
+
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        int gradual_width_index = 15;
+        int gradual_index;
+
+        for(i=0;i<width;i++){
+            for(j=0;j<height;j++){
+                if(pixels[counter]>3000000){
+                    if(founded_edge==false){
+                        edge_y[i] = j;
+                        founded_edge = true;
+                    }
+                }
+                counter++;
+            }
+            if(founded_edge==false){
+                edge_y[i] = 0;
+            }else{
+                founded_edge=false;
+            }
+        }
+
+        int dif, max_dif=0, end_dif, left_val, right_val, dif_val;
+        for(i=0;i<width;i++){
+            if(i<gradual_width_index+1){
+                continue;
+            }
+            else{
+                for(int q = i-gradual_width_index; q<i; q++){
+                    dif = Math.abs(edge_y[q+1]-edge_y[q]);
+                    if(dif>max_dif){
+                        max_dif = dif;
+                    }
+                }
+                end_dif = Math.abs(edge_y[i-gradual_width_index] - edge_y[i]);
+                if(end_dif<max_dif){
+                    left_val = edge_y[i-gradual_width_index];
+                    right_val = edge_y[i];
+                    dif_val = Math.abs(left_val-right_val);
+                    gradual_index=0;
+                    if(right_val > left_val) {
+                        for (j = i - gradual_width_index; j < i; j++) {
+                            edge_y[j] = left_val + (dif_val * gradual_index);
+                            gradual_index++;
+                        }
+                    }else{
+                        for(j = i - gradual_width_index; j < i; j++){
+                            edge_y[j] = left_val - (dif_val * gradual_index);
+                            gradual_index++;
+                        }
+                    }
+                }
+            }
+        }
+
+        counter=0;
+        for(i=0;i<width;i++){
+            for(j=0;j<height;j++){
+                if(edge_y[i] > j){
+                    bitmapimage.setPixel(i, j, Color.GREEN);
+                }
+            }
+            counter++;
+        }
+
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/*
+*  counter=0;
+        boolean founded_edge=false;
 
         for(i=0;i<width;i++){
             for(j=0;j<height;j++){
@@ -323,11 +417,7 @@ public class AfterActivity extends Activity {
                     }
                 }
                 if(founded_edge==false){
-                    bitmap.setPixel(i, j, Color.CYAN);
-                    /*
-                    compose_pixel[compose_pixel_length][0] = i;
-                    compose_pixel[compose_pixel_length][1] = j;
-                    compose_pixel_length++;*/
+                    bitmapimage.setPixel(i, j, Color.CYAN);
                 }
                 counter++;
             }
@@ -337,7 +427,7 @@ public class AfterActivity extends Activity {
             }else{
                 founded_edge=false;
             }
-        }
+        }*/
 
         j=0;
         for(i=width/2;i<width-1;i++){
@@ -412,7 +502,7 @@ public class AfterActivity extends Activity {
             }
         }
 
-        return bitmap;
+        return bitmapimage;
     }
 
 
