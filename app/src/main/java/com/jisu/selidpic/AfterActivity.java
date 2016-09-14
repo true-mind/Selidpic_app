@@ -63,7 +63,8 @@ public class AfterActivity extends Activity {
             @Override
             public void run() {
                 byte[] arr = getIntent().getByteArrayExtra("image");
-                image = BitmapFactory.decodeByteArray(arr, 0, arr.length);
+                image = resize(arr);
+                //image = BitmapFactory.decodeByteArray(arr, 0, arr.length);
 
                 screenWidth = image.getWidth();
                 screenHeight = image.getHeight();
@@ -118,10 +119,41 @@ public class AfterActivity extends Activity {
 
                 threadhandler.sendEmptyMessage(0);
             }
+            
         });
         thread.start();
 
     }
+
+    private Bitmap resize(byte[] arr) {
+        //Get the dimensions of the View
+
+        int targetW = imageView2.getWidth();
+        int targetH = imageView2.getHeight();
+        Log.i("MyTag", "imageview2 width : "+ targetW +" height : "+targetH);
+        //onCreate 안에서 view가 아직 안 띄워짐 고로 임의 값 설정하겠음 나중에 수정해도 됨
+
+        targetW = getIntent().getIntExtra("width", 0) * 10;
+        targetH = getIntent().getIntExtra("height", 0) * 10;
+
+        //Get the dimensions of the bitmap
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(arr, 0, arr.length, options);
+        int photoW = options.outWidth;
+        int photoH = options.outHeight;
+
+        //Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+        //Decode the image file into a Bitmap sized to fill the View
+        options.inJustDecodeBounds = false;
+        options.inSampleSize = scaleFactor;
+        options.inPurgeable = true;
+        Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length, options);
+        return bitmap;
+    };
+
 
     private Handler threadhandler = new Handler(){
         public void handleMessage(Message msg){
@@ -338,7 +370,7 @@ public class AfterActivity extends Activity {
         }*/
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+/*
         int gradual_width_index = 15;
         int gradual_index;
 
@@ -401,11 +433,11 @@ public class AfterActivity extends Activity {
             }
             counter++;
         }
-
+*/
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-/*
-*  counter=0;
-        boolean founded_edge=false;
+
+        counter=0;
+        founded_edge=false;
 
         for(i=0;i<width;i++){
             for(j=0;j<height;j++){
@@ -427,30 +459,30 @@ public class AfterActivity extends Activity {
             }else{
                 founded_edge=false;
             }
-        }*/
+        }
 
         j=0;
         for(i=width/2;i<width-1;i++){
-            if(edge_y[i]-edge_y[i-1] > (height/4)){
+            if(edge_y[i]-edge_y[i-1] > (height/5)){
                 temp_point_right[j][0] = edge_y[i-1];
                 temp_point_right[j][1] = edge_y[i];
                 j++;
                 temp_point_right_length++;
                 for(int q=0;q<height;q++){
-                    //bitmap.setPixel(i, q, Color.BLUE);
+                    bitmapimage.setPixel(i, q, Color.BLUE);
                 }
             }
         }
 
         j=0;
         for(i=1;i<width/2;i++){
-            if(edge_y[i-1]-edge_y[i] > (height/4)){
+            if(edge_y[i-1]-edge_y[i] > (height/5)){
                 temp_point_left[j][0] = edge_y[i-1];
                 temp_point_left[j][1] = edge_y[i];
                 j++;
                 temp_point_left_length++;
                 for(int q=0;q<height;q++){
-                    //bitmap.setPixel(i, q, Color.GREEN);
+                    bitmapimage.setPixel(i, q, Color.GREEN);
                 }
             }
         }
@@ -468,7 +500,7 @@ public class AfterActivity extends Activity {
                         }
                     }
                     if (founded_edge == false) {
-                        //bitmap.setPixel(j, i,  Color.CYAN);
+                        bitmapimage.setPixel(j, i,  Color.CYAN);
                         /*compose_pixel[compose_pixel_length][0] = j;
                         compose_pixel[compose_pixel_length][1] = i;
                         compose_pixel_length++;*/
@@ -486,13 +518,13 @@ public class AfterActivity extends Activity {
                         * (width-1)) + i;
                 for(j=width-1; j>width/2; j--){
                     counter -= height;
-                    if(pixels[counter] > 3000000) {
+                    if(pixels[counter] > 4000000) {
                         if(founded_edge == false){
                             founded_edge = true;
                         }
                     }
                     if(founded_edge == false){
-                        //bitmap.setPixel(j, i, Color.CYAN);
+                        bitmapimage.setPixel(j, i, Color.CYAN);
                         /*compose_pixel[compose_pixel_length][0] = j;
                         compose_pixel[compose_pixel_length][1] = i;
                         compose_pixel_length++;
@@ -501,6 +533,24 @@ public class AfterActivity extends Activity {
                 founded_edge=false;
             }
         }
+
+        //2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+        /*
+        for(i=1;i<width;i++){
+            if((Math.abs(edge_y[i]-edge_y[i-1]) > (height/15)) && (Math.abs(edge_y[i]-edge_y[i-1]) < (height/5))){
+                edge_y[i] = edge_y[i-1];
+            }
+        }
+
+        for(i=0;i<width;i++){
+            for(j=0;j<height;j++){
+                if(j<=edge_y[i]){
+                    bitmapimage.setPixel(i, j, Color.CYAN);
+                }
+            }
+        }*/
+
+        //2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
 
         return bitmapimage;
     }
