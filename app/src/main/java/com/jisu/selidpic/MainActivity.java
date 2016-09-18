@@ -72,8 +72,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent4 = new Intent(MainActivity.this, CautionActivity.class);
-                intent4.putExtra("width", 70);
-                intent4.putExtra("height", 50);
+                intent4.putExtra("width", 35);
+                intent4.putExtra("height", 25);
                 intent4.putExtra("view", 4);
                 startActivity(intent4);
                 finish();

@@ -30,5 +30,4 @@
         <activity android:name=".CautionActivity"/>
         <activity android:name=".BetweenActivity"/>
     </application>
-
 </manifest>

@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -43,7 +42,7 @@ public class AfterActivity extends Activity {
     Drawable ConP, Con;
     ImageButton btn1, btn2, btn3, btn4;
     ImageView imageView2;
-    Bitmap image, imageCropped, edge_image, temp_image;
+    Bitmap image, imageCropped, edge_image, temp_image, background, background_before_crop;
     String filename;
     double display;
     int convertCount;
@@ -51,6 +50,7 @@ public class AfterActivity extends Activity {
     int screenWidth, screenHeight, widthMid, heightMid, picWidth, picHeight;
     int cropStartX, cropStartY;
     int colors[], average_color;
+    int back_width, back_height;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +64,7 @@ public class AfterActivity extends Activity {
             public void run() {
                 byte[] arr = getIntent().getByteArrayExtra("image");
                 image = resize(arr);
+                background_before_crop = getBackgroundImage();
                 //image = BitmapFactory.decodeByteArray(arr, 0, arr.length);
 
                 screenWidth = image.getWidth();
@@ -86,7 +87,6 @@ public class AfterActivity extends Activity {
                     cropStartX = widthMid - (picWidth/2);
                     cropStartY = heightMid - (picHeight/2);
 
-
                     Log.d("MyTag", "cropStartX:"+cropStartX);
                     Log.d("MyTag", "cropStartY:"+cropStartY);
                     Log.d("MyTag", "widthMid:"+widthMid);
@@ -95,16 +95,22 @@ public class AfterActivity extends Activity {
                     Log.d("MyTag", "picHeight:"+picHeight);
 
                     imageCropped = Bitmap.createBitmap(image, cropStartX, cropStartY, picWidth, picHeight);
+                    int crop_w = (back_width - picHeight);
+                    crop_w/=2;
+                    Log.i("MyTag", "back_width:"+back_width);
+                    Log.i("MyTag", "picWidth:"+picWidth);
+                    Log.i("MyTag", "crop_w:"+crop_w);
+                    background = Bitmap.createBitmap(background_before_crop, crop_w, 0, picHeight, picWidth);
                 }
                 else{
-
                     picWidth = screenWidth;
                     picHeight = (picWidth/width*height);
                     cropStartX = widthMid - (picWidth/2);
                     cropStartY = heightMid - (picHeight/2);
-
+                    int crop_w = (back_width - picHeight);
+                    crop_w/=2;
                     imageCropped = Bitmap.createBitmap(image, cropStartX, cropStartY, picWidth, picHeight);
-
+                    background = Bitmap.createBitmap(background_before_crop, crop_w, 0, picHeight, picWidth);
                 }
                 convertCount = 0;
                 temp_image = rotateImage(imageCropped, 90);
@@ -125,12 +131,38 @@ public class AfterActivity extends Activity {
 
     }
 
+    private Bitmap getBackgroundImage(){
+        /*
+        int targetW = imageView2.getWidth();
+        int targetH = imageView2.getHeight();
+        //onCreate 안에서 view가 아직 안 띄워짐 고로 임의 값 설정하겠음 나중에 수정해도 됨
+
+        targetW = getIntent().getIntExtra("width", 0) * 10;
+        targetH = getIntent().getIntExtra("height", 0) * 10;
+        BitmapFactory.Options options1 = new BitmapFactory.Options();
+        options1.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(getResources(), R.mipmap.photo_back, options1);
+        int photoW = options1.outWidth;
+        int photoH = options1.outHeight;
+        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+        Log.i("MyTag", "in getBackgroundImage(), photoW:"+photoW+", photoH:"+photoH+", targetW:"+targetW+", targetH:"+targetH+", scaleFactor:"+scaleFactor);
+
+        options1.inJustDecodeBounds = false;
+        options1.inSampleSize = scaleFactor;
+        options1.inPurgeable = true;
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.photo_back, options1);*/
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.photo_back);
+        Log.i("MyTag", "photo back width : "+bitmap.getWidth()+", height : "+bitmap.getHeight());
+        back_width = bitmap.getWidth();
+        back_height = bitmap.getHeight();
+        return bitmap;
+    }
+
     private Bitmap resize(byte[] arr) {
         //Get the dimensions of the View
 
         int targetW = imageView2.getWidth();
         int targetH = imageView2.getHeight();
-        Log.i("MyTag", "imageview2 width : "+ targetW +" height : "+targetH);
         //onCreate 안에서 view가 아직 안 띄워짐 고로 임의 값 설정하겠음 나중에 수정해도 됨
 
         targetW = getIntent().getIntExtra("width", 0) * 10;
@@ -140,17 +172,24 @@ public class AfterActivity extends Activity {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeByteArray(arr, 0, arr.length, options);
+        /*
         int photoW = options.outWidth;
         int photoH = options.outHeight;
+        */
+        int photoW = options.outHeight;
+        int photoH = options.outWidth;
 
         //Determine how much to scale down the image
         int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+        Log.i("MyTag", "in resize(), photoW:"+photoW+", photoH:"+photoH+", targetW:"+targetW+", targetH:"+targetH+", scaleFactor:"+scaleFactor);
+
 
         //Decode the image file into a Bitmap sized to fill the View
         options.inJustDecodeBounds = false;
         options.inSampleSize = scaleFactor;
         options.inPurgeable = true;
         Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length, options);
+        Log.i("MyTag", "real photo width : "+bitmap.getWidth()+", height : "+bitmap.getHeight());
         return bitmap;
     };
 
@@ -441,15 +480,26 @@ public class AfterActivity extends Activity {
 
         for(i=0;i<width;i++){
             for(j=0;j<height;j++){
-                if(pixels[counter]>3000000){
+                if(pixels[counter]>4000000){
                     if(founded_edge==false){
                         edge_y[i] = j;
+                        //333333333333333333333333333333333333333333333333333333333333333333333333333
+                        int c, q;
+                        for(q=j;q<j+10;q++){
+                            if(q<height){
+                                break;
+                            }
+                            c=background.getPixel(i, q);
+                            bitmapimage.setPixel(i, q, c);
+                        }
+                        //333333333333333333333333333333333333333333333333333333333333333333333333333
                         //Log.d("MyTag", "found edge : ("+i+","+j+")");
                         founded_edge = true;
                     }
                 }
                 if(founded_edge==false){
-                    bitmapimage.setPixel(i, j, Color.CYAN);
+                    int c = background.getPixel(i, j);
+                    bitmapimage.setPixel(i, j, c);
                 }
                 counter++;
             }
@@ -496,11 +546,22 @@ public class AfterActivity extends Activity {
                     counter += height;
                     if (pixels[counter] > 4000000) {
                         if (founded_edge == false) {
+                            //333333333333333333333333333333333333333333333333333333333333333333333333333
+                            int c, p;
+                            for(p=j;p<j+10;p++){
+                                if(p<width/2){
+                                    break;
+                                }
+                                c=background.getPixel(p, i);
+                                bitmapimage.setPixel(p, i, c);
+                            }
+                            //333333333333333333333333333333333333333333333333333333333333333333333333333
                             founded_edge = true;
                         }
                     }
                     if (founded_edge == false) {
-                        bitmapimage.setPixel(j, i,  Color.CYAN);
+                        int c = background.getPixel(j, i);
+                        bitmapimage.setPixel(j, i,  c);
                         /*compose_pixel[compose_pixel_length][0] = j;
                         compose_pixel[compose_pixel_length][1] = i;
                         compose_pixel_length++;*/
@@ -520,11 +581,22 @@ public class AfterActivity extends Activity {
                     counter -= height;
                     if(pixels[counter] > 4000000) {
                         if(founded_edge == false){
+                            //333333333333333333333333333333333333333333333333333333333333333333333333333
+                            int c, p;
+                            for(p=j;p>j-10;p--){
+                                if(p>width/2){
+                                    break;
+                                }
+                                c=background.getPixel(p, i);
+                                bitmapimage.setPixel(p, i, c);
+                            }
+                            //333333333333333333333333333333333333333333333333333333333333333333333333333
                             founded_edge = true;
                         }
                     }
                     if(founded_edge == false){
-                        bitmapimage.setPixel(j, i, Color.CYAN);
+                        int c = background.getPixel(j, i);
+                        bitmapimage.setPixel(j, i, c);
                         /*compose_pixel[compose_pixel_length][0] = j;
                         compose_pixel[compose_pixel_length][1] = i;
                         compose_pixel_length++;
@@ -535,7 +607,7 @@ public class AfterActivity extends Activity {
         }
 
         //2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
-        /*
+/*
         for(i=1;i<width;i++){
             if((Math.abs(edge_y[i]-edge_y[i-1]) > (height/15)) && (Math.abs(edge_y[i]-edge_y[i-1]) < (height/5))){
                 edge_y[i] = edge_y[i-1];
@@ -545,11 +617,12 @@ public class AfterActivity extends Activity {
         for(i=0;i<width;i++){
             for(j=0;j<height;j++){
                 if(j<=edge_y[i]){
-                    bitmapimage.setPixel(i, j, Color.CYAN);
+                    int c = background.getPixel(i, j);
+                    bitmapimage.setPixel(i, j, c);
                 }
             }
-        }*/
-
+        }
+*/
         //2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
 
         return bitmapimage;

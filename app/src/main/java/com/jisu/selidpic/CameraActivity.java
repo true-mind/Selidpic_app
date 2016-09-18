@@ -95,6 +95,8 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
     private Boolean brightness_ok = false;
     private Boolean autoshot = false;
 
+    Thread autoThread;
+
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
 
@@ -295,11 +297,16 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                     camera_switch.setClickable(true);
                     camera_switch.setImageDrawable(camera_user);
                     autoshot = false;
+                    auto_textview_guide.setVisibility(View.INVISIBLE);
+                    auto_textview_number.setVisibility(View.INVISIBLE);
                 }
                 else{
                     camera_switch.setClickable(false);
                     camera_switch.setImageDrawable(camera_auto);
                     autoshot = true;
+
+                    auto_textview_number.setText("");
+                    auto_textview_number.setVisibility(View.VISIBLE);
 /*
                     if(brightness_ok){
 
@@ -786,6 +793,3 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         finish();
     }
 }
-
-
-
