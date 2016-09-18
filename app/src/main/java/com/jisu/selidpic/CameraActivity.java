@@ -47,6 +47,7 @@ import android.os.Handler;
 public class CameraActivity extends Activity implements SurfaceHolder.Callback, Camera.PreviewCallback, SensorEventListener {
     int width, height, cameraId, statview;
     double display;
+    int ppi;
     static Camera camera;
     SurfaceHolder holder;
     VideoView videoView;
@@ -237,7 +238,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         intent.putExtra("screenWidth", screenWidth);
         intent.putExtra("screenHeight", screenHeight);
         intent.putExtra("statview", statview);
-        intent.putExtra("display", display);
+        intent.putExtra("ppi", ppi);
         startActivity(intent);
         finish();
     }
@@ -281,7 +282,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                 intent.putExtra("screenWidth", screenWidth);
                 intent.putExtra("screenHeight", screenHeight);
                 intent.putExtra("statview", statview);
-                intent.putExtra("display", display);
+                intent.putExtra("ppi", ppi);
                 startActivity(intent);
                 finish();
             }
@@ -488,6 +489,8 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         float x_inch = screenWidth/xdpi;
         float y_inch = screenHeight/ydpi;
         display = Math.sqrt(x_inch*x_inch+y_inch*y_inch);
+        ppi = (int)(Math.sqrt(screenWidth*screenWidth+screenHeight*screenHeight)/display);
+
 
         Toast.makeText(CameraActivity.this,"screenWidth"+screenWidth+"+"+"screenHeight"+screenHeight,Toast.LENGTH_SHORT).show();
 

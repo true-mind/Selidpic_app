@@ -45,6 +45,7 @@ public class AfterActivity extends Activity {
     Bitmap image, imageCropped, edge_image, temp_image, background, background_before_crop;
     String filename;
     double display;
+    int ppi;
     int convertCount;
     int width, height, statview;
     int screenWidth, screenHeight, widthMid, heightMid, picWidth, picHeight;
@@ -73,7 +74,7 @@ public class AfterActivity extends Activity {
                 width = getIntent().getIntExtra("width", 0);
                 height = getIntent().getIntExtra("height", 0);
                 statview = getIntent().getIntExtra("statview", 5);
-                display = getIntent().getDoubleExtra("display", 0);
+                ppi = getIntent().getIntExtra("ppi", 0);
 
                 widthMid = screenWidth/2;
                 heightMid = screenHeight/2;
@@ -93,7 +94,7 @@ public class AfterActivity extends Activity {
                     Log.d("MyTag", "heightMid:"+heightMid);
                     Log.d("MyTag", "picWidth:"+picWidth);
                     Log.d("MyTag", "picHeight:"+picHeight);
-
+                    Log.d("MyTag", "ppi:"+ppi);
                     imageCropped = Bitmap.createBitmap(image, cropStartX, cropStartY, picWidth, picHeight);
                     int crop_w = (back_width - picHeight);
                     crop_w/=2;
