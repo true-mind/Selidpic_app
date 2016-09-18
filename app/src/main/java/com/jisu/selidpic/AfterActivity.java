@@ -46,6 +46,7 @@ public class AfterActivity extends Activity {
     String filename;
     double display;
     int ppi;
+    int counterPara;
     int convertCount;
     int width, height, statview;
     int screenWidth, screenHeight, widthMid, heightMid, picWidth, picHeight;
@@ -75,6 +76,8 @@ public class AfterActivity extends Activity {
                 height = getIntent().getIntExtra("height", 0);
                 statview = getIntent().getIntExtra("statview", 5);
                 ppi = getIntent().getIntExtra("ppi", 0);
+
+                counterPara = (int) Math.sqrt(ppi)*240000;
 
                 widthMid = screenWidth/2;
                 heightMid = screenHeight/2;
@@ -166,8 +169,8 @@ public class AfterActivity extends Activity {
         int targetH = imageView2.getHeight();
         //onCreate 안에서 view가 아직 안 띄워짐 고로 임의 값 설정하겠음 나중에 수정해도 됨
 
-        targetW = getIntent().getIntExtra("width", 0) * 10;
-        targetH = getIntent().getIntExtra("height", 0) * 10;
+        targetW = getIntent().getIntExtra("width", 0) * ppi/30;
+        targetH = getIntent().getIntExtra("height", 0) * ppi/30;
 
         //Get the dimensions of the bitmap
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -285,7 +288,8 @@ public class AfterActivity extends Activity {
         btn4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveScreen(imageCropped);
+                saveScreen1(imageCropped);
+                saveScreen2(edge_image);
                 Toast.makeText(AfterActivity.this, "Saved", Toast.LENGTH_SHORT).show();
             }
 
@@ -481,13 +485,13 @@ public class AfterActivity extends Activity {
 
         for(i=0;i<width;i++){
             for(j=0;j<height;j++){
-                if(pixels[counter]>4000000){
+                if(pixels[counter]>counterPara){
                     if(founded_edge==false){
                         edge_y[i] = j;
                         //333333333333333333333333333333333333333333333333333333333333333333333333333
                         int c, q;
-                        for(q=j;q<j+10;q++){
-                            if(q<height){
+                        for(q=j;q<j+8;q++){
+                            if(q>=height){
                                 break;
                             }
                             c=background.getPixel(i, q);
@@ -545,12 +549,12 @@ public class AfterActivity extends Activity {
                 counter = i;
                 for (j = 0; j < width / 2; j++) {
                     counter += height;
-                    if (pixels[counter] > 4000000) {
+                    if (pixels[counter] > counterPara) {
                         if (founded_edge == false) {
                             //333333333333333333333333333333333333333333333333333333333333333333333333333
                             int c, p;
-                            for(p=j;p<j+10;p++){
-                                if(p<width/2){
+                            for(p=j;p<j+5;p++){
+                                if(p>=width/2){
                                     break;
                                 }
                                 c=background.getPixel(p, i);
@@ -580,12 +584,12 @@ public class AfterActivity extends Activity {
                         * (width-1)) + i;
                 for(j=width-1; j>width/2; j--){
                     counter -= height;
-                    if(pixels[counter] > 4000000) {
+                    if(pixels[counter] > counterPara) {
                         if(founded_edge == false){
                             //333333333333333333333333333333333333333333333333333333333333333333333333333
                             int c, p;
-                            for(p=j;p>j-10;p--){
-                                if(p>width/2){
+                            for(p=j;p>j-5;p--){
+                                if(p<=width/2){
                                     break;
                                 }
                                 c=background.getPixel(p, i);
@@ -665,7 +669,28 @@ public class AfterActivity extends Activity {
         return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
     }
 
-    private void saveScreen(Bitmap image) {
+    private void saveScreen1(Bitmap image) {
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+        try {
+            File mediaStorageDir = new File("/sdcard/SelidPic");
+
+            if(! mediaStorageDir.isDirectory()) {
+                mediaStorageDir.mkdirs();
+            }
+
+            filename = "Origin_"+ timeStamp + ".jpeg";
+            FileOutputStream out = new FileOutputStream("/sdcard/SelidPic/"+ filename);
+            image.compress(Bitmap.CompressFormat.JPEG, 50, out);
+            out.close();
+        } catch (FileNotFoundException e) {
+            Log.d("FileNotFoundException:", e.getMessage());
+        }catch(IOException exception){
+            Log.e("IOException", exception.getMessage());
+        }
+    }
+    private void saveScreen2(Bitmap image) {
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
