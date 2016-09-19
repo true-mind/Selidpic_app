@@ -15,6 +15,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -37,13 +38,11 @@ public class AfterActivity extends Activity {
     ImageView imageView2;
     Bitmap image, imageCropped, edge_image, temp_image, background, background_before_crop;
     String filename;
-    int ppi;
-    int counterPara;
-    int convertCount;
+    int ppi, counterPara, convertCount;
     int width, height, statview;
     int screenWidth, screenHeight, widthMid, heightMid, picWidth, picHeight;
-    int cropStartX, cropStartY;
-    int back_width, back_height;
+    int cropStartX, cropStartY, back_width, back_height;
+    int global_x, global_y;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +50,13 @@ public class AfterActivity extends Activity {
         setContentView(R.layout.activity_after);
         initView();
         initListener();
+        initTouchListener();
         progressdialog = ProgressDialog.show(this, "로딩중", "Loading...please wait", true, false);
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 byte[] arr = getIntent().getByteArrayExtra("image");
-                image = resize(arr);
+                image = set_resolution(arr);
                 background_before_crop = getBackgroundImage();
                 //image = BitmapFactory.decodeByteArray(arr, 0, arr.length);
 
@@ -112,6 +112,34 @@ public class AfterActivity extends Activity {
 
     }
 
+    private void initTouchListener(){
+        imageView2.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                int action = motionEvent.getAction();
+                if(action==MotionEvent.ACTION_DOWN){
+                    global_x = (int) motionEvent.getX();
+                    global_y = (int) motionEvent.getY();
+                }
+                if(action==MotionEvent.ACTION_MOVE){
+                    global_x = (int) motionEvent.getX();
+                    global_y = (int) motionEvent.getY();
+                    if(global_x>10 && global_x<picHeight-10 && global_y>10 && global_y<picWidth-10) {
+                        for(int n=global_x-10;n<global_x+10;n++){
+                            for(int m=global_y-10;m<global_y+10;m++){
+                                int c = background.getPixel(n, m);
+                                edge_image.setPixel(n, m, c);
+                            }
+                        }
+                        imageView2.setImageBitmap(edge_image);
+                        imageView2.invalidate();
+                    }
+                }
+                return true;
+            }
+        });
+    }
+
     private Bitmap getBackgroundImage(){
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.photo_back);
         back_width = bitmap.getWidth();
@@ -119,7 +147,7 @@ public class AfterActivity extends Activity {
         return bitmap;
     }
 
-    private Bitmap resize(byte[] arr) {
+    private Bitmap set_resolution(byte[] arr) {
         //Get the dimensions of the View
         ppi = getIntent().getIntExtra("ppi", 0);
         int targetW, targetH;
@@ -252,7 +280,7 @@ public class AfterActivity extends Activity {
 
     }
     private Bitmap getEdge(Bitmap bitmapimage){ // Sobel 윤곽선 검출 알고리즘 사용
-        int  Gx[][], Gy[][];//, G[][];
+        int  Gx[][], Gy[][];
         int width = bitmapimage.getWidth();
         int height = bitmapimage.getHeight();
         int[] pixels = new int[width * height];
@@ -274,13 +302,12 @@ public class AfterActivity extends Activity {
         }
         Gx = new int[width][height];
         Gy = new int[width][height];
-        //G  = new int[width][height];
 
         counter = 0;
         for (i=0; i<width; i++) {
             for (j=0; j<height; j++) {
                 if (i==0 || i==width-1 || j==0 || j==height-1) {
-                    Gx[i][j] = Gy[i][j] = 0;//G[i][j] = 0; // Image boundary cleared
+                    Gx[i][j] = Gy[i][j] = 0;// Image boundary cleared
                     pixels[counter] = 0;
                     counter++;
                 }
@@ -289,7 +316,6 @@ public class AfterActivity extends Activity {
                             output[i-1][j-1] - 2*output[i-1][j] - output[i-1][j+1];
                     Gy[i][j] = output[i-1][j+1] + 2*output[i][j+1] + output[i+1][j+1] -
                             output[i-1][j-1] - 2*output[i][j-1] - output[i+1][j-1];
-                    //G[i][j]  = Math.abs(Gx[i][j]) + Math.abs(Gy[i][j]);
                     pixels[counter] = Math.abs(Gx[i][j]) + Math.abs(Gy[i][j]);
                     counter++;
                 }

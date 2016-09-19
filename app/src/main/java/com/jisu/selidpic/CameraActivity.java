@@ -180,7 +180,6 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
         switch(statview)
         {
-
             case 1:
                 imgStatus.setImageDrawable(camStat1);
                 break;
@@ -196,7 +195,6 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
             case 5:
                 imgStatus.setImageDrawable(camStatDefault);
                 break;
-
         }
 
     }
@@ -238,7 +236,6 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 intent.setType("image/*");
                 startActivityForResult(intent,1);
-
             }
         });
 
@@ -249,12 +246,10 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
             }
         });
 
-
         toggleButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-
                 if(toggleButton.isChecked()){
                     camera_switch.setClickable(true);
                     camera_switch.setImageDrawable(camera_user);
@@ -269,14 +264,13 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
                     auto_textview_number.setText("");
                     auto_textview_number.setVisibility(View.VISIBLE);
-
                 }
             }
         });
+
         camera_helper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 camera_helper.setVisibility(View.GONE);
 
             }
