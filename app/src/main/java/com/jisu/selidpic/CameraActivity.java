@@ -15,7 +15,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Message;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -29,7 +28,6 @@ import android.widget.ImageView;
 import android.graphics.drawable.Drawable;
 
 import java.io.ByteArrayOutputStream;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import android.os.Handler;
@@ -135,7 +133,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                                         int i=5;
                                         while(autoshot){
                                             if(i==1){
-                                                func_waiting();
+                                                func_take_picture();
                                                 break;
                                             }
                                             else {
@@ -203,7 +201,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
     }
 
-    private void func_waiting() {
+    private void func_take_picture() {
         byte[] byteArray = outstr.toByteArray();
         Intent intent = new Intent(CameraActivity.this, AfterActivity.class);
         intent.putExtra("image",byteArray);
@@ -247,18 +245,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         camera_switch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                byte[] byteArray = outstr.toByteArray();
-                Intent intent = new Intent(CameraActivity.this, AfterActivity.class);
-                intent.putExtra("image",byteArray);
-                intent.putExtra("width", width);
-                intent.putExtra("height", height);
-                intent.putExtra("screenWidth", screenWidth);
-                intent.putExtra("screenHeight", screenHeight);
-                intent.putExtra("statview", statview);
-                intent.putExtra("ppi", ppi);
-                startActivity(intent);
-                finish();
+                func_take_picture();
             }
         });
 
