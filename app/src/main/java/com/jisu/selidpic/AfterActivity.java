@@ -66,7 +66,6 @@ public class AfterActivity extends Activity {
                 width = getIntent().getIntExtra("width", 0);
                 height = getIntent().getIntExtra("height", 0);
                 statview = getIntent().getIntExtra("statview", 5);
-                ppi = getIntent().getIntExtra("ppi", 0);
 
                 counterPara = (int) Math.sqrt(ppi)*240000;
 
@@ -82,19 +81,9 @@ public class AfterActivity extends Activity {
                     cropStartX = widthMid - (picWidth/2);
                     cropStartY = heightMid - (picHeight/2);
 
-                    Log.d("MyTag", "cropStartX:"+cropStartX);
-                    Log.d("MyTag", "cropStartY:"+cropStartY);
-                    Log.d("MyTag", "widthMid:"+widthMid);
-                    Log.d("MyTag", "heightMid:"+heightMid);
-                    Log.d("MyTag", "picWidth:"+picWidth);
-                    Log.d("MyTag", "picHeight:"+picHeight);
-                    Log.d("MyTag", "ppi:"+ppi);
                     imageCropped = Bitmap.createBitmap(image, cropStartX, cropStartY, picWidth, picHeight);
                     int crop_w = (back_width - picHeight);
                     crop_w/=2;
-                    Log.i("MyTag", "back_width:"+back_width);
-                    Log.i("MyTag", "picWidth:"+picWidth);
-                    Log.i("MyTag", "crop_w:"+crop_w);
                     background = Bitmap.createBitmap(background_before_crop, crop_w, 0, picHeight, picWidth);
                 }
                 else{
@@ -132,12 +121,18 @@ public class AfterActivity extends Activity {
 
     private Bitmap resize(byte[] arr) {
         //Get the dimensions of the View
-
+        ppi = getIntent().getIntExtra("ppi", 0);
         int targetW, targetH;
         //onCreate 안에서 view가 아직 안 띄워짐 고로 임의 값 설정하겠음 나중에 수정해도 됨
 
-        targetW = getIntent().getIntExtra("width", 0) * ppi/30;
-        targetH = getIntent().getIntExtra("height", 0) * ppi/30;
+        double tempW = (double) getIntent().getIntExtra("width", 0);
+        double tempH = (double) getIntent().getIntExtra("height", 0);
+        double multy_value = (double) ppi/30;
+        tempW *= multy_value;
+        tempH *= multy_value;
+
+        targetW = (int) tempW;
+        targetH = (int) tempH;
 
         //Get the dimensions of the bitmap
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -148,14 +143,12 @@ public class AfterActivity extends Activity {
 
         //Determine how much to scale down the image
         int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-        Log.i("MyTag", "in resize(), photoW:"+photoW+", photoH:"+photoH+", targetW:"+targetW+", targetH:"+targetH+", scaleFactor:"+scaleFactor);
 
         //Decode the image file into a Bitmap sized to fill the View
         options.inJustDecodeBounds = false;
         options.inSampleSize = scaleFactor;
         options.inPurgeable = true;
         Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length, options);
-        Log.i("MyTag", "real photo width : "+bitmap.getWidth()+", height : "+bitmap.getHeight());
         return bitmap;
     };
 

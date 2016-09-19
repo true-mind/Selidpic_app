@@ -128,13 +128,11 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
                             brightness_ok = false;
                         } else {
                             brightness_ok = true;
-                            Log.i("MyTag", "autoshot debug, autoshot:"+autoshot.booleanValue());
                             if(autoshot){
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
                                         int i=5;
-                                        Log.i("MyTag", "autoshot debug, i="+i);
                                         while(autoshot){
                                             if(i==1){
                                                 func_waiting();
@@ -345,12 +343,6 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
         params.setPreviewFpsRange(15000, 30000);
 
-        //카메라에서 찍을 수 있는 모든 사이즈를 가지고 와서 그 중에 하나를 선택한다.
-
-        List<Camera.Size> pictureSizes = params.getSupportedPictureSizes();
-        for(int i=0;i<pictureSizes.size();i++){
-            Log.d("MyTag", "Supported Picture Size : "+pictureSizes.get(i).width +" "+pictureSizes.get(i).height);
-        }
         params.setPreviewFormat(ImageFormat.NV21);
         params.setPreviewFrameRate(30);
         camera.setDisplayOrientation(90); //세로 모드 가정
