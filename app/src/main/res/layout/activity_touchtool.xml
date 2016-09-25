@@ -78,7 +78,11 @@
                 android:id="@+id/seekBar1"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:layout_weight="0.322"/>
+                android:layout_weight="0.322"
+                android:progress="0"
+                android:secondaryProgress="0"
+                android:progressDrawable="@drawable/progress_drawable"
+                android:thumb="@drawable/thumb_drawable"/>
             <Space
                 android:layout_width="0px"
                 android:layout_height="1px"
@@ -132,7 +136,11 @@
                     android:id="@+id/seekBar2"
                     android:gravity="center"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="0.322"/>
+                    android:layout_weight="0.322"
+                    android:progress="0"
+                    android:secondaryProgress="0"
+                    android:progressDrawable="@drawable/progress_drawable"
+                    android:thumb="@drawable/thumb_drawable"/>
 
             <Space
                 android:layout_width="0px"
