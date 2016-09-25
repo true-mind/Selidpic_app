@@ -32,8 +32,7 @@
                 android:bottomRightRadius="45dp"
                 android:bottomLeftRadius="45dp"
                 android:topLeftRadius="45dp"
-                android:topRightRadius="45dp"
-                />
+                android:topRightRadius="45dp"/>
 
             <Space
                 android:layout_width="0px"
@@ -89,6 +88,7 @@
                 android:layout_weight="0.022"/>
 
             <ImageView
+                android:layout_gravity="center"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/imageView4"
@@ -148,6 +148,7 @@
                 android:layout_weight="0.022"/>
 
             <ImageView
+                android:layout_gravity="center"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/imageView5"

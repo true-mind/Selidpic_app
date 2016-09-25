@@ -6,33 +6,37 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 
-import java.io.ByteArrayOutputStream;
-
 /**
  * Created by 현석 on 2016-09-23.
  */
 public class TouchToolActivity extends Activity {
 
+    Boolean ispencil = false;
     ImageButton touchtool_btn1, touchtool_btn2, touchtool_btn3, touchtool_btn4;
     ImageView imageView3, imageView4, imageView5;
     SeekBar seekBar1, seekBar2;
-    Bitmap image, background_before_crop, background, imageCropped, temp_image, edge_image;
+    Bitmap image, background_before_crop, background, imageCropped, origin_image, edge_image, temp_image;
     int width, height, view, screenWidth, screenHeight, statview, ppi, convertCount;
     ProgressDialog progressdialog;
     int back_width, back_height, counterPara, widthMid, heightMid, picWidth, picHeight, cropStartX, cropStartY, global_x, global_y;
     Drawable touchtool_btn1_selected, touchtool_btn2_selected, touchtool_btn1_disabled, touchtool_btn2_disabled;
+    int eraser_size=20, pencil_size=20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,19 +92,20 @@ public class TouchToolActivity extends Activity {
                     background = Bitmap.createBitmap(background_before_crop, crop_w, 0, picHeight, picWidth);
                 }
                 convertCount = 0;
+                origin_image = rotateImage(imageCropped, 90);
                 temp_image = rotateImage(imageCropped, 90);
-
                 edge_image = getEdge(temp_image);
-
                 initTouchListener();
                 threadhandler.sendEmptyMessage(0);
             }
         });
         thread.start();
-
     }
 
     private void initTouchListener() {
+
+        final int xv = (imageView3.getWidth() - edge_image.getWidth())/2;
+        final int yv = (imageView3.getHeight() - edge_image.getHeight())/2;
         imageView3.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -108,19 +113,38 @@ public class TouchToolActivity extends Activity {
                 if(action==MotionEvent.ACTION_DOWN){
                     global_x = (int) motionEvent.getX();
                     global_y = (int) motionEvent.getY();
+                    global_x -= xv;
+                    global_y -= yv;
+                    Log.i("MyTag", "x:"+global_x+", y:"+global_y);
                 }
                 if(action==MotionEvent.ACTION_MOVE){
                     global_x = (int) motionEvent.getX();
                     global_y = (int) motionEvent.getY();
-                    if(global_x>10 && global_x<picHeight-10 && global_y>10 && global_y<picWidth-10) {
-                        for(int n=global_x-10;n<global_x+10;n++){
-                            for(int m=global_y-10;m<global_y+10;m++){
-                                int c = background.getPixel(n, m);
-                                edge_image.setPixel(n, m, c);
+                    global_x -= xv;
+                    global_y -= yv;
+                    Log.i("MyTag", "x:"+global_x+", y:"+global_y);
+                    if(ispencil) {
+                        if(global_x>pencil_size/2 && global_x<picHeight-pencil_size/2 && global_y>pencil_size/2 && global_y<picWidth-pencil_size/2) {
+                            for (int n = global_x - pencil_size/2; n < global_x + pencil_size/2; n++) {
+                                for (int m = global_y - pencil_size/2; m < global_y + pencil_size/2; m++) {
+                                    int c = background.getPixel(n, m);
+                                    edge_image.setPixel(n, m, c);
+                                }
                             }
+                            imageView3.setImageBitmap(edge_image);
+                            imageView3.invalidate();
                         }
-                        imageView3.setImageBitmap(edge_image);
-                        imageView3.invalidate();
+                    }else{
+                        if(global_x>eraser_size/2 && global_x<picHeight-eraser_size/2 && global_y>eraser_size/2 && global_y<picWidth-eraser_size/2) {
+                            for (int n = global_x - eraser_size/2; n < global_x + eraser_size/2; n++) {
+                                for (int m = global_y - eraser_size/2; m < global_y + eraser_size/2; m++) {
+                                    int c = origin_image.getPixel(n, m);
+                                    edge_image.setPixel(n, m, c);
+                                }
+                            }
+                            imageView3.setImageBitmap(edge_image);
+                            imageView3.invalidate();
+                        }
                     }
                 }
                 return true;
@@ -353,6 +377,7 @@ public class TouchToolActivity extends Activity {
             public void onClick(View v) {
                 touchtool_btn1.setBackground(touchtool_btn1_selected);
                 touchtool_btn2.setBackground(touchtool_btn2_disabled);
+                ispencil = true;
             }
         });
 
@@ -362,6 +387,7 @@ public class TouchToolActivity extends Activity {
             public void onClick(View v) {
                 touchtool_btn1.setBackground(touchtool_btn1_disabled);
                 touchtool_btn2.setBackground(touchtool_btn2_selected);
+                ispencil = false;
             }
         });
 
@@ -395,6 +421,66 @@ public class TouchToolActivity extends Activity {
                 intent.putExtra("ppi", ppi);
                 startActivity(intent);
                 finish();
+            }
+        });
+        ShapeDrawable sd = new ShapeDrawable(new RectShape());
+        sd.setIntrinsicWidth(pencil_size);
+        sd.setIntrinsicHeight(pencil_size);
+        sd.getPaint().setColor(Color.parseColor("#000000"));
+        imageView4.setImageDrawable(sd);
+        imageView5.setImageDrawable(sd);
+
+        seekBar1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                if(i<15){
+                    pencil_size=15;
+
+                }else{
+                    pencil_size=i;
+                }
+                ShapeDrawable sd = new ShapeDrawable(new RectShape());
+                sd.setIntrinsicWidth(pencil_size);
+                sd.setIntrinsicHeight(pencil_size);
+                sd.getPaint().setColor(Color.parseColor("#000000"));
+                imageView4.setImageDrawable(sd);
+                imageView4.invalidateDrawable(sd);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        seekBar2.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                if(i<15){
+                    eraser_size=15;
+                }else{
+                    eraser_size=i;
+                }
+                ShapeDrawable sd = new ShapeDrawable(new RectShape());
+                sd.setIntrinsicWidth(eraser_size);
+                sd.setIntrinsicHeight(eraser_size);
+                sd.getPaint().setColor(Color.parseColor("#000000"));
+                imageView5.setImageDrawable(sd);
+                imageView5.invalidateDrawable(sd);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
     }
