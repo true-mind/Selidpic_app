@@ -36,7 +36,7 @@ public class AfterActivity extends Activity {
     Drawable ConP, Con;
     ImageButton btn1, btn2, btn3, btn4;
     ImageView imageView2;
-    Bitmap image, imageCropped, edge_image, temp_image, background, background_before_crop;
+    Bitmap image, imageCropped, edge_image, temp_image, background, background_before_crop, origin_image;
     String filename;
     int ppi, counterPara, convertCount;
     int width, height, statview;
@@ -50,15 +50,11 @@ public class AfterActivity extends Activity {
         setContentView(R.layout.activity_after);
         initView();
         initListener();
-        initTouchListener();
         progressdialog = ProgressDialog.show(this, "로딩중", "Loading...please wait", true, false);
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 byte[] arr = getIntent().getByteArrayExtra("image");
-                image = set_resolution(arr);
-                background_before_crop = getBackgroundImage();
-                //image = BitmapFactory.decodeByteArray(arr, 0, arr.length);
 
                 screenWidth = image.getWidth();
                 screenHeight = image.getHeight();
@@ -66,40 +62,6 @@ public class AfterActivity extends Activity {
                 width = getIntent().getIntExtra("width", 0);
                 height = getIntent().getIntExtra("height", 0);
                 statview = getIntent().getIntExtra("statview", 5);
-
-                counterPara = (int) Math.sqrt(ppi)*240000;
-
-                widthMid = screenWidth/2;
-                heightMid = screenHeight/2;
-
-                picHeight = (screenWidth/width*height);
-                picWidth = (screenHeight/height*width);
-
-                if(picHeight>screenHeight){
-                    picHeight = screenHeight;
-                    picWidth = (picHeight/height*width);
-                    cropStartX = widthMid - (picWidth/2);
-                    cropStartY = heightMid - (picHeight/2);
-
-                    imageCropped = Bitmap.createBitmap(image, cropStartX, cropStartY, picWidth, picHeight);
-                    int crop_w = (back_width - picHeight);
-                    crop_w/=2;
-                    background = Bitmap.createBitmap(background_before_crop, crop_w, 0, picHeight, picWidth);
-                }
-                else{
-                    picWidth = screenWidth;
-                    picHeight = (picWidth/width*height);
-                    cropStartX = widthMid - (picWidth/2);
-                    cropStartY = heightMid - (picHeight/2);
-                    int crop_w = (back_width - picHeight);
-                    crop_w/=2;
-                    imageCropped = Bitmap.createBitmap(image, cropStartX, cropStartY, picWidth, picHeight);
-                    background = Bitmap.createBitmap(background_before_crop, crop_w, 0, picHeight, picWidth);
-                }
-                convertCount = 0;
-                temp_image = rotateImage(imageCropped, 90);
-
-                edge_image = getEdge(temp_image);
 
                 Con = getResources().getDrawable(R.mipmap.after_convert);
                 ConP = getResources().getDrawable(R.mipmap.after_convert_pressed);
@@ -111,75 +73,6 @@ public class AfterActivity extends Activity {
         thread.start();
 
     }
-
-    private void initTouchListener(){
-        imageView2.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                int action = motionEvent.getAction();
-                if(action==MotionEvent.ACTION_DOWN){
-                    global_x = (int) motionEvent.getX();
-                    global_y = (int) motionEvent.getY();
-                }
-                if(action==MotionEvent.ACTION_MOVE){
-                    global_x = (int) motionEvent.getX();
-                    global_y = (int) motionEvent.getY();
-                    if(global_x>10 && global_x<picHeight-10 && global_y>10 && global_y<picWidth-10) {
-                        for(int n=global_x-10;n<global_x+10;n++){
-                            for(int m=global_y-10;m<global_y+10;m++){
-                                int c = background.getPixel(n, m);
-                                edge_image.setPixel(n, m, c);
-                            }
-                        }
-                        imageView2.setImageBitmap(edge_image);
-                        imageView2.invalidate();
-                    }
-                }
-                return true;
-            }
-        });
-    }
-
-    private Bitmap getBackgroundImage(){
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.photo_back);
-        back_width = bitmap.getWidth();
-        back_height = bitmap.getHeight();
-        return bitmap;
-    }
-
-    private Bitmap set_resolution(byte[] arr) {
-        //Get the dimensions of the View
-        ppi = getIntent().getIntExtra("ppi", 0);
-        int targetW, targetH;
-        //onCreate 안에서 view가 아직 안 띄워짐 고로 임의 값 설정하겠음 나중에 수정해도 됨
-
-        double tempW = (double) getIntent().getIntExtra("width", 0);
-        double tempH = (double) getIntent().getIntExtra("height", 0);
-        double multy_value = (double) ppi/30;
-        tempW *= multy_value;
-        tempH *= multy_value;
-
-        targetW = (int) tempW;
-        targetH = (int) tempH;
-
-        //Get the dimensions of the bitmap
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeByteArray(arr, 0, arr.length, options);
-        int photoW = options.outHeight;
-        int photoH = options.outWidth;
-
-        //Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-
-        //Decode the image file into a Bitmap sized to fill the View
-        options.inJustDecodeBounds = false;
-        options.inSampleSize = scaleFactor;
-        options.inPurgeable = true;
-        Bitmap bitmap = BitmapFactory.decodeByteArray(arr, 0, arr.length, options);
-        return bitmap;
-    };
-
 
     private Handler threadhandler = new Handler(){
         public void handleMessage(Message msg){
@@ -232,7 +125,7 @@ public class AfterActivity extends Activity {
                 imageView2.setImageBitmap(null);
                 if (convertCount==0){
                     btn2.setBackground(ConP);
-                    imageView2.setImageBitmap(rotateImage(imageCropped, 90));
+                    imageView2.setImageBitmap(origin_image);
                     convertCount--;
                 }
                 else{
@@ -279,174 +172,6 @@ public class AfterActivity extends Activity {
         });
 
     }
-    private Bitmap getEdge(Bitmap bitmapimage){ // Sobel 윤곽선 검출 알고리즘 사용
-        int  Gx[][], Gy[][];
-        int width = bitmapimage.getWidth();
-        int height = bitmapimage.getHeight();
-        int[] pixels = new int[width * height];
-        int[][] output = new int[width][height];
-        int i, j, counter, k=0;
-
-        int edge_y[] = new int[width];
-        int temp_point_right[][] = new int[100][2];
-        int temp_point_left[][] = new int[100][2];
-        int temp_point_left_length = 0;
-        int temp_point_right_length = 0;
-
-        for(i=0;i<width;i++){
-            for(j=0;j<height;j++){
-                pixels[k]=bitmapimage.getPixel(i, j);
-                output[i][j] = pixels[k];
-                k++;
-            }
-        }
-        Gx = new int[width][height];
-        Gy = new int[width][height];
-
-        counter = 0;
-        for (i=0; i<width; i++) {
-            for (j=0; j<height; j++) {
-                if (i==0 || i==width-1 || j==0 || j==height-1) {
-                    Gx[i][j] = Gy[i][j] = 0;// Image boundary cleared
-                    pixels[counter] = 0;
-                    counter++;
-                }
-                else{
-                    Gx[i][j] = output[i+1][j-1] + 2*output[i+1][j] + output[i+1][j+1] -
-                            output[i-1][j-1] - 2*output[i-1][j] - output[i-1][j+1];
-                    Gy[i][j] = output[i-1][j+1] + 2*output[i][j+1] + output[i+1][j+1] -
-                            output[i-1][j-1] - 2*output[i][j-1] - output[i+1][j-1];
-                    pixels[counter] = Math.abs(Gx[i][j]) + Math.abs(Gy[i][j]);
-                    counter++;
-                }
-            }
-        }
-
-        counter=0;
-        boolean founded_edge=false;
-        counter=0;
-        founded_edge=false;
-
-        for(i=0;i<width;i++){
-            for(j=0;j<height;j++){
-                if(pixels[counter]>counterPara){
-                    if(founded_edge==false){
-                        edge_y[i] = j;
-                        int c, q;
-                        for(q=j;q<j+8;q++){
-                            if(q>=height){
-                                break;
-                            }
-                            c=background.getPixel(i, q);
-                            bitmapimage.setPixel(i, q, c);
-                        }
-                        founded_edge = true;
-                    }
-                }
-                if(founded_edge==false){
-                    int c = background.getPixel(i, j);
-                    bitmapimage.setPixel(i, j, c);
-                }
-                counter++;
-            }
-            if(founded_edge==false){
-                edge_y[i] = 0;
-            }else{
-                founded_edge=false;
-            }
-        }
-
-        j=0;
-        for(i=width/2;i<width-1;i++){
-            if(edge_y[i]-edge_y[i-1] > (height/5)){
-                temp_point_right[j][0] = edge_y[i-1];
-                temp_point_right[j][1] = edge_y[i];
-                j++;
-                temp_point_right_length++;
-            }
-        }
-
-        j=0;
-        for(i=1;i<width/2;i++){
-            if(edge_y[i-1]-edge_y[i] > (height/5)){
-                temp_point_left[j][0] = edge_y[i-1];
-                temp_point_left[j][1] = edge_y[i];
-                j++;
-                temp_point_left_length++;
-            }
-        }
-
-        founded_edge=false;
-        for(int q=0;q<temp_point_left_length;q++) {
-            for (i = temp_point_left[q][0]; i > temp_point_left[q][1]; i--) {
-                counter = i;
-                for (j = 0; j < width / 2; j++) {
-                    counter += height;
-                    if (pixels[counter] > counterPara) {
-                        if (founded_edge == false) {
-                            int c, p;
-                            for(p=j;p<j+5;p++){
-                                if(p>=width/2){
-                                    break;
-                                }
-                                c=background.getPixel(p, i);
-                                bitmapimage.setPixel(p, i, c);
-                            }
-                            founded_edge = true;
-                        }
-                    }
-                    if (founded_edge == false) {
-                        int c = background.getPixel(j, i);
-                        bitmapimage.setPixel(j, i,  c);
-                    }
-                }
-                founded_edge = false;
-            }
-        }
-
-        founded_edge=false;
-        for(int q=0;q<temp_point_right_length;q++){
-            for(i = temp_point_right[q][0]; i < temp_point_right[q][1]; i++){
-                counter = (height
-                        * (width-1)) + i;
-                for(j=width-1; j>width/2; j--){
-                    counter -= height;
-                    if(pixels[counter] > counterPara) {
-                        if(founded_edge == false){
-                            int c, p;
-                            for(p=j;p>j-5;p--){
-                                if(p<=width/2){
-                                    break;
-                                }
-                                c=background.getPixel(p, i);
-                                bitmapimage.setPixel(p, i, c);
-                            }
-                            founded_edge = true;
-                        }
-                    }
-                    if(founded_edge == false){
-                        int c = background.getPixel(j, i);
-                        bitmapimage.setPixel(j, i, c);}
-                }
-                founded_edge=false;
-            }
-        }
-        return bitmapimage;
-    }
-
-    private Bitmap rotateImage(Bitmap src, float degree) {
-
-        // Matrix 객체 생성
-        Matrix matrix = new Matrix();
-        // 회전 각도 셋팅
-        matrix.setScale(1, -1);  // 상하반전
-        matrix.setScale(-1, 1);  // 좌우반전
-
-        matrix.postRotate(degree);
-        // 이미지와 Matrix 를 셋팅해서 Bitmap 객체 생성
-        return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
-    }
-
     private void saveScreen1(Bitmap image) {
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());

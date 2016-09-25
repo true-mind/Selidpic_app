@@ -29,5 +29,6 @@
         <activity android:name=".UserDefineActivity"/>
         <activity android:name=".CautionActivity"/>
         <activity android:name=".BetweenActivity"/>
+        <activity android:name=".TouchToolActivity"/>
     </application>
 </manifest>

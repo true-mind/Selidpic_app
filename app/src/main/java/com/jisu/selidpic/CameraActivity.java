@@ -205,8 +205,6 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
         intent.putExtra("image",byteArray);
         intent.putExtra("width", width);
         intent.putExtra("height", height);
-        intent.putExtra("screenWidth", screenWidth);
-        intent.putExtra("screenHeight", screenHeight);
         intent.putExtra("statview", statview);
         intent.putExtra("ppi", ppi);
         startActivity(intent);
