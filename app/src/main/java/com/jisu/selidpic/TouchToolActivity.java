@@ -22,6 +22,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 /**
  * Created by 현석 on 2016-09-23.
  */
@@ -411,14 +414,30 @@ public class TouchToolActivity extends Activity {
                 bmp.compress(Bitmap.CompressFormat.JPEG, 50, outstr);
                 outstr = new ByteArrayOutputStream();
                 byte[] byteArray = outstr.toByteArray();*/
+
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                origin_image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+                stream.reset();
+                edge_image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] byteArray2 = stream.toByteArray();
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 Intent intent = new Intent(TouchToolActivity.this, AfterActivity.class);
-                //intent.putExtra("image",byteArray);
+                intent.putExtra("origin_image",byteArray);
+                intent.putExtra("composed_image", byteArray2);
                 intent.putExtra("width", width);
                 intent.putExtra("height", height);
                 intent.putExtra("screenWidth", screenWidth);
                 intent.putExtra("screenHeight", screenHeight);
                 intent.putExtra("statview", statview);
                 intent.putExtra("ppi", ppi);
+                intent.putExtra("picWidth", picHeight);
+                intent.putExtra("picHeight", picWidth);
                 startActivity(intent);
                 finish();
             }

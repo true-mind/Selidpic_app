@@ -54,17 +54,18 @@ public class AfterActivity extends Activity {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                byte[] arr = getIntent().getByteArrayExtra("image");
-
-                screenWidth = image.getWidth();
-                screenHeight = image.getHeight();
+                byte[] arr1 = getIntent().getByteArrayExtra("origin_image");
+                byte[] arr2 = getIntent().getByteArrayExtra("composed_image");
 
                 width = getIntent().getIntExtra("width", 0);
                 height = getIntent().getIntExtra("height", 0);
                 statview = getIntent().getIntExtra("statview", 5);
-
+                picWidth = getIntent().getIntExtra("picWidth", 0);
+                picHeight = getIntent().getIntExtra("picHeight", 0);
                 Con = getResources().getDrawable(R.mipmap.after_convert);
                 ConP = getResources().getDrawable(R.mipmap.after_convert_pressed);
+                origin_image = BitmapFactory.decodeByteArray(arr1, 0, arr1.length);
+                edge_image = BitmapFactory.decodeByteArray(arr2, 0, arr2.length);
 
                 threadhandler.sendEmptyMessage(0);
             }
@@ -77,6 +78,7 @@ public class AfterActivity extends Activity {
     private Handler threadhandler = new Handler(){
         public void handleMessage(Message msg){
             imageView2.setImageBitmap(edge_image);
+            Toast.makeText(AfterActivity.this, "완료", Toast.LENGTH_SHORT).show();
             progressdialog.dismiss();
         }
     };
