@@ -416,10 +416,10 @@ public class TouchToolActivity extends Activity {
                 byte[] byteArray = outstr.toByteArray();*/
 
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                origin_image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                origin_image.compress(Bitmap.CompressFormat.JPEG, 50, stream);
                 byte[] byteArray = stream.toByteArray();
                 stream.reset();
-                edge_image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                edge_image.compress(Bitmap.CompressFormat.JPEG, 50, stream);
                 byte[] byteArray2 = stream.toByteArray();
                 try {
                     stream.close();
