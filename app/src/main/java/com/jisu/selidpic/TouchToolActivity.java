@@ -18,6 +18,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 
+import java.io.ByteArrayOutputStream;
+
 /**
  * Created by 현석 on 2016-09-23.
  */
@@ -366,6 +368,12 @@ public class TouchToolActivity extends Activity {
         touchtool_btn3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(TouchToolActivity.this, CameraActivity.class);
+                intent.putExtra("width", width);
+                intent.putExtra("height", height);
+                intent.putExtra("view", statview);
+                startActivity(intent);
+                finish();
 
             }
         });
@@ -373,8 +381,19 @@ public class TouchToolActivity extends Activity {
         touchtool_btn4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent Intent = new Intent(TouchToolActivity.this, AfterActivity.class);
-                startActivity(Intent);
+               /* Bitmap bmp = BitmapFactory.decodeByteArray(outstr.toByteArray(), 0, outstr.size());
+                bmp.compress(Bitmap.CompressFormat.JPEG, 50, outstr);
+                outstr = new ByteArrayOutputStream();
+                byte[] byteArray = outstr.toByteArray();*/
+                Intent intent = new Intent(TouchToolActivity.this, AfterActivity.class);
+                //intent.putExtra("image",byteArray);
+                intent.putExtra("width", width);
+                intent.putExtra("height", height);
+                intent.putExtra("screenWidth", screenWidth);
+                intent.putExtra("screenHeight", screenHeight);
+                intent.putExtra("statview", statview);
+                intent.putExtra("ppi", ppi);
+                startActivity(intent);
                 finish();
             }
         });

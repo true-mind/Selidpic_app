@@ -72,30 +72,13 @@
                 android:layout_height="1px"
                 android:layout_weight="0.022"/>
 
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.322"
-                    android:weightSum="1">
-
-                    <Space
-                        android:layout_width="1px"
-                        android:layout_height="0px"
-                        android:layout_weight="0.42"/>
-
-                    <SeekBar
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:id="@+id/seekBar1"
-                        android:layout_weight="0.16"/>
-
-                    <Space
-                        android:layout_width="1px"
-                        android:layout_height="0px"
-                        android:layout_weight="0.42"/>
-                </LinearLayout>
-
+            <SeekBar
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/seekBar1"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.322"/>
             <Space
                 android:layout_width="0px"
                 android:layout_height="1px"
@@ -143,29 +126,13 @@
                 android:layout_height="1px"
                 android:layout_weight="0.022"/>
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.322"
-                android:weightSum="1">
-
-                <Space
-                    android:layout_width="1px"
-                    android:layout_height="0px"
-                    android:layout_weight="0.42"/>
-
                 <SeekBar
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:id="@+id/seekBar2"
-                    android:layout_weight="0.16"/>
-
-                <Space
-                    android:layout_width="1px"
-                    android:layout_height="0px"
-                    android:layout_weight="0.42"/>
-            </LinearLayout>
+                    android:gravity="center"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0.322"/>
 
             <Space
                 android:layout_width="0px"
@@ -184,16 +151,16 @@
                 android:layout_weight="0.1186"/>
         </LinearLayout>
 
-        <Space
-            android:layout_width="1px"
-            android:layout_height="0px"
-            android:layout_weight="0.042"/>
+    <Space
+        android:layout_width="1px"
+        android:layout_height="0px"
+        android:layout_weight="0.022"/>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.028"
+        android:layout_weight="0.068"
         android:weightSum="1">
 
         <Space
@@ -231,6 +198,6 @@
     <Space
         android:layout_width="1px"
         android:layout_height="0px"
-        android:layout_weight="0.0472"/>
+        android:layout_weight="0.0272"/>
 
 </LinearLayout>
