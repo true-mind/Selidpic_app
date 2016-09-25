@@ -14,9 +14,9 @@ public class CautionActivity extends Activity {
 
     ImageButton button, button2;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_caution);
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_caution);
 
         final int width, height, view;
         Intent intent = getIntent();

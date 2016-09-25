@@ -201,7 +201,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback, 
 
     private void func_take_picture() {
         byte[] byteArray = outstr.toByteArray();
-        Intent intent = new Intent(CameraActivity.this, AfterActivity.class);
+        Intent intent = new Intent(CameraActivity.this, TouchToolActivity.class);
         intent.putExtra("image",byteArray);
         intent.putExtra("width", width);
         intent.putExtra("height", height);
