@@ -166,7 +166,7 @@ public class AfterActivity extends Activity {
         btn4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveScreen1(imageCropped);
+                saveScreen1(origin_image);
                 saveScreen2(edge_image);
                 Toast.makeText(AfterActivity.this, "Saved", Toast.LENGTH_SHORT).show();
             }
