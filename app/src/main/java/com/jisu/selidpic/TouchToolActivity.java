@@ -40,6 +40,9 @@ public class TouchToolActivity extends Activity {
     int back_width, back_height, counterPara, widthMid, heightMid, picWidth, picHeight, cropStartX, cropStartY, global_x, global_y;
     Drawable touchtool_btn1_selected, touchtool_btn2_selected, touchtool_btn1_disabled, touchtool_btn2_disabled;
     int eraser_size=20, pencil_size=20;
+    int motionEvent_x, motionEvent_y;
+    double x_percent, y_percent;
+    int edge_image_real_x, edge_image_real_y, background_real_x, background_real_y, origin_image_real_x, origin_image_real_y;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,30 +109,47 @@ public class TouchToolActivity extends Activity {
     }
 
     private void initTouchListener() {
+        int[] location = new int[2];
+        imageView3.getLocationOnScreen(location);
+        int imageView_left_x = location[0];
+        int imageView_top_y = location[1];
+        final int imageView_width = imageView3.getWidth();
+        final int imageView_height = imageView3.getHeight();
 
-        final int xv = (imageView3.getWidth() - edge_image.getWidth())/2;
-        final int yv = (imageView3.getHeight() - edge_image.getHeight())/2;
+        final int background_width = background.getWidth();
+        final int background_height = background.getHeight();
+
+        final int edge_image_width = edge_image.getWidth();
+        final int edge_image_height = edge_image.getHeight();
+
+        final int origin_image_width = origin_image.getWidth();
+        final int origin_image_height = origin_image.getHeight();
+
         imageView3.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 int action = motionEvent.getAction();
                 if(action==MotionEvent.ACTION_DOWN){
-                    global_x = (int) motionEvent.getX();
-                    global_y = (int) motionEvent.getY();
-                    global_x -= xv;
-                    global_y -= yv;
-                    Log.i("MyTag", "x:"+global_x+", y:"+global_y);
+                    // DOWN 시에도 적용되게 할건지?
                 }
                 if(action==MotionEvent.ACTION_MOVE){
-                    global_x = (int) motionEvent.getX();
-                    global_y = (int) motionEvent.getY();
-                    global_x -= xv;
-                    global_y -= yv;
-                    Log.i("MyTag", "x:"+global_x+", y:"+global_y);
-                    if(ispencil) {
-                        if(global_x>pencil_size/2 && global_x<picHeight-pencil_size/2 && global_y>pencil_size/2 && global_y<picWidth-pencil_size/2) {
-                            for (int n = global_x - pencil_size/2; n < global_x + pencil_size/2; n++) {
-                                for (int m = global_y - pencil_size/2; m < global_y + pencil_size/2; m++) {
+                    motionEvent_x = (int) motionEvent.getX();
+                    motionEvent_y = (int) motionEvent.getY();
+
+                    x_percent = (double) motionEvent_x / (double) imageView_width;
+                    y_percent = (double) motionEvent_y / (double) imageView_height;
+
+                    edge_image_real_x = (int) (x_percent * (double) edge_image_width);
+                    edge_image_real_y = (int) (y_percent * (double) edge_image_height);
+
+                    if(ispencil){ //background, edge image
+                        background_real_x = (int) (x_percent * (double) background_width);
+                        background_real_y = (int) (y_percent * (double) background_height);
+
+                        if(edge_image_real_x > pencil_size/2 && edge_image_real_x < edge_image_width - pencil_size/2
+                                && edge_image_real_y > pencil_size/2 && edge_image_real_y < edge_image_height - pencil_size/2){
+                            for(int n = edge_image_real_x - pencil_size/2 ; n < edge_image_real_x + pencil_size/2 ; n++){
+                                for(int m = edge_image_real_y - pencil_size/2 ; m < edge_image_real_y + pencil_size/2 ; m++){
                                     int c = background.getPixel(n, m);
                                     edge_image.setPixel(n, m, c);
                                 }
@@ -137,11 +157,15 @@ public class TouchToolActivity extends Activity {
                             imageView3.setImageBitmap(edge_image);
                             imageView3.invalidate();
                         }
-                    }else{
-                        if(global_x>eraser_size/2 && global_x<picHeight-eraser_size/2 && global_y>eraser_size/2 && global_y<picWidth-eraser_size/2) {
-                            for (int n = global_x - eraser_size/2; n < global_x + eraser_size/2; n++) {
-                                for (int m = global_y - eraser_size/2; m < global_y + eraser_size/2; m++) {
-                                    int c = origin_image.getPixel(n, m);
+                    }else{ //origin_image, edge_image
+                        origin_image_real_x = (int) (x_percent * (double) origin_image_width);
+                        origin_image_real_y = (int) (y_percent * (double) origin_image_height);
+
+                        if(edge_image_real_x > pencil_size/2 && edge_image_real_x < edge_image_width - pencil_size/2
+                                && edge_image_real_y > pencil_size/2 && edge_image_real_y < edge_image_height - pencil_size/2){
+                            for(int n = edge_image_real_x - pencil_size/2 ; n < edge_image_real_x + pencil_size/2 ; n++){
+                                for(int m = edge_image_real_y - pencil_size/2 ; m < edge_image_real_y + pencil_size/2 ; m++){
+                                    int c =origin_image.getPixel(n, m);
                                     edge_image.setPixel(n, m, c);
                                 }
                             }
